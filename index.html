@@ -23,7 +23,7 @@
 <title>Avisarnos</title>
 <meta name="apple-mobile-web-app-title" content="Avisarnos">
 <meta name="application-name" content="Avisarnos">
-<meta name="description" content="Protocolo de emergencia vecinal ante inundación y corte de rutas, Salsipuedes.">
+<meta name="description" content="Protocolo de emergencia vecinal ante inundación y corte de rutas.">
 <meta name="theme-color" content="#2f5d50">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -234,7 +234,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
   <!-- TABLERO -->
   <section id="tab-tablero">
     <h1>Avisarnos</h1>
-    <p class="sub">Protocolo de emergencia de la cuadra ante inundación y corte de rutas — Salsipuedes</p>
+    <p class="sub">Protocolo de emergencia de la cuadra ante inundación y corte de rutas<span id="cfgLugar"></span></p>
 
     <div id="alertaBanner" class="banner ninguna">
       <div class="row" style="align-items:flex-start">
@@ -407,8 +407,8 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
         <label class="field"><span>Defensa Civil</span><input type="text" id="tel_defensaCivil"></label>
         <label class="field"><span>Bomberos</span><input type="text" id="tel_bomberos"></label>
         <label class="field"><span>Emergencia ambiental</span><input type="text" id="tel_ambiental"></label>
-        <label class="field"><span>ETAC — Equipo Técnico de Acción ante Catástrofes (Sierras Chicas)</span><input type="text" id="tel_etac" placeholder="Completar cuando se tenga el número"></label>
-        <label class="field"><span>Otros (uno por línea)</span><textarea id="tel_otros" rows="2" placeholder="Ej: Cooperativa Telefónica de Salsipuedes (03543) ..."></textarea></label>
+        <label class="field"><span id="cfgOrgLabel">Organismo local de emergencias</span><input type="text" id="tel_etac" placeholder="Completar cuando se tenga el número"></label>
+        <label class="field"><span>Otros (uno por línea)</span><textarea id="tel_otros" rows="2" placeholder="Ej: cooperativa eléctrica o telefónica de la zona, con su número"></textarea></label>
         <div class="btnrow"><button class="btn-accent btn-sm" id="telGuardarBtn">Guardar</button><button class="btn-ghost btn-sm" id="telCancelarBtn">Cancelar</button></div>
       </div>
     </div>
@@ -425,7 +425,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
     <div class="card">
       <h2>Qué resolvemos nosotros, qué resuelve lo oficial</h2>
       <p class="muted" style="margin:0 0 8px">Esto nunca reemplaza el llamado oficial ante riesgo real. Es la organización previa para no depender solo de esperar que llegue la ayuda.</p>
-      <p style="margin:10px 0 4px;font-weight:600;font-size:.9rem">Lo resuelve el organismo oficial (Defensa Civil, ETAC, Bomberos, Protección Ambiental):</p>
+      <p style="margin:10px 0 4px;font-weight:600;font-size:.9rem">Lo resuelve el organismo oficial (<span id="cfgOrgLista">Defensa Civil, Bomberos, Protección Ambiental</span>):</p>
       <ul class="steps" style="list-style:disc;padding-left:18px;counter-reset:none">
         <li style="padding-left:0">Declarar la alerta oficial y decidir una evacuación.</li>
         <li style="padding-left:0">Rescate, cortes de ruta, atención médica de emergencia.</li>
@@ -456,7 +456,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
     <details>
       <summary><svg class="i"><use href="#ic-bell"></use></svg>Responsable de alerta (rota, un nombre por mes)<svg class="i car"><use href="#ic-chevron"></use></svg></summary>
       <ol class="steps">
-        <li>Con pronóstico de tormenta fuerte, revisás el Servicio Meteorológico Nacional (zona Sierras Chicas) y los canales oficiales de Defensa Civil de Córdoba.</li>
+        <li>Con pronóstico de tormenta fuerte, revisás el Servicio Meteorológico Nacional<span id="cfgZona"></span> y los canales oficiales de Defensa Civil<span id="cfgProvincia"></span>.</li>
         <li>Si sube a naranja o roja, lo declarás en el Tablero (botón "Actualizar alerta") y avisás a cada responsable de tramo.</li>
         <li>Cuando el temporal pasa y no hay más riesgo, volvés a poner "Sin alerta" en el Tablero.</li>
       </ol>
@@ -538,7 +538,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
       <label class="field" style="margin-top:0"><span>Tope para gasto sin consulta previa</span><input type="number" id="topeInput" inputmode="decimal"></label>
       <label class="field"><span>Custodio de esta temporada</span><input type="text" id="custodioInput"></label>
       <label class="field"><span>Monto y frecuencia de aporte sugerido</span><input type="text" id="aporteInput" placeholder="Ej: $5000 por mes, octubre a abril"></label>
-      <label class="field"><span>Alias / CVU / CBU para aportar</span><input type="text" id="aliasPagoInput" placeholder="Ej: cuadra.salsipuedes.ualá"></label>
+      <label class="field"><span>Alias / CVU / CBU para aportar</span><input type="text" id="aliasPagoInput" placeholder="Ej: cuadra.mibarrio.uala"></label>
       <label class="field"><span>Link de pago (opcional, Ualá, Mercado Pago, etc.)</span><input type="text" id="linkPagoInput" placeholder="https://..."></label>
       <label class="field"><span>Dónde está guardada la caja física</span><input type="text" id="efectivoUbicacionInput" placeholder="Ej: en casa del custodio, caja metálica"></label>
       <p class="muted" style="margin-top:8px">La cuenta digital queda a nombre de una persona porque abrir una cuenta sin titular no es posible en un banco o billetera común. Lo que la hace "de todos" no es a nombre de quién está, es que el registro de movimientos quede público acá abajo y que el custodio rote cada temporada. Para una cuenta realmente neutral hace falta constituir una asociación civil o cooperativa formal con CUIT propio — otro paso, aparte de esta app.</p>
@@ -643,6 +643,35 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
     }catch(e2){ showMsg("No se pudo copiar. Mantené presionado el texto para seleccionarlo."); }
   }
 
+  // ---------- datos del lugar (config.js) ----------
+  // Todo lo que cambia de un barrio a otro se define en config.js, en
+  // window.AVISARNOS. Si falta algo, la app usa valores generales.
+  var LOCAL=(function(){
+    var c=window.AVISARNOS||{}, o=c.organismoLocal||{}, t=c.telefonos||{};
+    return {
+      lugar:c.lugar||"", zona:c.zona||"", provincia:c.provincia||"",
+      organismoLocal:{ sigla:o.sigla||"", nombre:o.nombre||"", telefono:o.telefono||"" },
+      telefonos:{ medicos:t.medicos||"107", defensaCivil:t.defensaCivil||"103", bomberos:t.bomberos||"100", ambiental:t.ambiental||"105" }
+    };
+  })();
+  function telefonosIniciales(){
+    var t=LOCAL.telefonos;
+    return { medicos:t.medicos, defensaCivil:t.defensaCivil, bomberos:t.bomberos, ambiental:t.ambiental, etac:LOCAL.organismoLocal.telefono, otros:"" };
+  }
+  function orgEtiqueta(){
+    var o=LOCAL.organismoLocal;
+    if(o.sigla && o.nombre) return o.sigla+" ("+o.nombre+")";
+    return o.sigla || o.nombre || "Organismo local de emergencias";
+  }
+  (function aplicarLugar(){
+    var o=LOCAL.organismoLocal;
+    if(LOCAL.lugar) $("cfgLugar").textContent=" — "+LOCAL.lugar;
+    if(LOCAL.zona) $("cfgZona").textContent=" (zona "+LOCAL.zona+")";
+    if(LOCAL.provincia) $("cfgProvincia").textContent=" de "+LOCAL.provincia;
+    $("cfgOrgLabel").textContent = (o.sigla && o.nombre) ? (o.sigla+" — "+o.nombre) : orgEtiqueta();
+    $("cfgOrgLista").textContent = "Defensa Civil, "+(o.sigla ? o.sigla+", " : "")+"Bomberos, Protección Ambiental";
+  })();
+
   // ---------- tabs ----------
   var tabs=["micasa","guia","tablero","roles","fondo"];
   function showTab(t){
@@ -671,7 +700,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
   var movTipoSel="ingreso";
   var movMedioSel="digital";
   var alertaEditOpen=false;
-  var telefonos={ medicos:"107", defensaCivil:"103", bomberos:"100", ambiental:"105", etac:"3541 65-3255", otros:"" };
+  var telefonos=telefonosIniciales();
   var telEditMode=false;
   var configGeneral={ linkTablero:"" };
   var linkTableroEditMode=false;
@@ -747,7 +776,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
   // Lista de preparación. Los tildes se guardan solo en este teléfono
   // (localStorage), nunca en la base compartida.
   var PREP=[
-    { id:"quedarse", titulo:"Para quedarse unos días sin salir", sub:"Ruta cortada, sin luz y sin agua de la red. En las Sierras Chicas es lo más probable.", items:[
+    { id:"quedarse", titulo:"Para quedarse unos días sin salir", sub:"Ruta cortada, sin luz y sin agua de la red.", items:[
       ["agua","Agua: unos 4 litros por persona por día, para al menos 3 días. Si no es envasada, renovala cada 6 meses."],
       ["comida","Comida que no necesite heladera ni cocción: latas, galletitas, barras de cereal. Y un abrelatas manual."],
       ["luz","Linterna y radio a pilas, con pilas de repuesto. Velas y fósforos en una bolsa cerrada."],
@@ -880,7 +909,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
     }, function(e){ showMsg(dbErrText(e)); });
 
     db.doc("telefonos/utiles").onSnapshot(function(snap){
-      telefonos = snap.exists ? snap.data() : { medicos:"107", defensaCivil:"103", bomberos:"100", ambiental:"105", etac:"3541 65-3255", otros:"" };
+      telefonos = snap.exists ? snap.data() : telefonosIniciales();
       renderTelefonos();
     }, function(e){ showMsg(dbErrText(e)); });
 
@@ -1253,7 +1282,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
       ["Defensa Civil", telefonos.defensaCivil],
       ["Bomberos", telefonos.bomberos],
       ["Emergencia ambiental", telefonos.ambiental],
-      ["ETAC (Acción ante Catástrofes, Sierras Chicas)", telefonos.etac || "sin cargar"]
+      [orgEtiqueta(), telefonos.etac || "sin cargar"]
     ];
     var html = rows.map(function(r){
       return '<div class="row" style="padding:5px 0"><div class="grow muted" style="font-size:.88rem">'+esc(r[0])+'</div><div style="font-weight:700">'+esc(r[1]||"—")+'</div></div>';

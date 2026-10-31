@@ -13,19 +13,17 @@ Cada casa carga su perfil (quién necesita ayuda prioritaria) y, cuando se decla
 ## Archivos
 
 - `index.html`: la app completa.
-- `config.js`: datos de conexión al proyecto de Firebase.
+- `config.js`: datos de conexión al proyecto de Firebase y datos del lugar (nombre, zona, provincia, organismo local, teléfonos). Es el único archivo que hay que editar para armar una copia.
 - `firestore.rules`: reglas de seguridad para pegar en la consola de Firebase.
 - `sw.js`, `manifest.webmanifest`, `icon*`: lo que permite instalarla en el celular y abrirla sin señal.
 - `vendor/`: la librería de Firebase (versión 13.1.0, licencia Apache 2.0), copiada acá para no depender de servidores externos.
 - `importar.html`: copia a la base datos que tengas en un archivo .json (por ejemplo, los de una versión anterior). Los datos no están en el repositorio: se eligen desde el dispositivo de quien importa.
 - `LICENSE`: texto completo de la licencia AGPL-3.0.
+- `REPLICAR.md`: guía para armar Avisarnos en otro barrio.
 
-## Para replicarla en otro barrio
+## Para armarla en otro barrio
 
-1. Crear un proyecto propio en Firebase (plan Spark) y una base de datos Firestore.
-2. Pegar el contenido de `firestore.rules` en la pestaña Reglas de Firestore y publicar.
-3. Reemplazar los datos de `config.js` por los del proyecto propio.
-4. Subir los archivos a un repositorio de GitHub y activar GitHub Pages.
+Cada barrio arma su propia copia, con su propia base de datos. No hace falta programar: todo lo local se configura en `config.js`. La guía paso a paso está en [REPLICAR.md](REPLICAR.md).
 
 Esto nunca reemplaza el llamado oficial ante riesgo real: 107 (emergencias médicas), 103 (Defensa Civil), 100 (Bomberos).
 

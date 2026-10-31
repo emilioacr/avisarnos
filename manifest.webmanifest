@@ -1,7 +1,7 @@
 {
   "name": "Avisarnos",
   "short_name": "Avisarnos",
-  "description": "Protocolo de emergencia vecinal ante inundación y corte de rutas, Salsipuedes.",
+  "description": "Protocolo de emergencia vecinal ante inundación y corte de rutas.",
   "lang": "es-AR",
   "start_url": "./",
   "scope": "./",

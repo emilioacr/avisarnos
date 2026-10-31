@@ -1,0 +1,107 @@
+rules_version = '2';
+
+// Reglas de seguridad de Avisarnos.
+//
+// Qué permiten: cualquiera con el link puede ver el tablero y cargar datos,
+// igual que hoy. Qué impiden: borrar cosas, crear colecciones que la app no
+// usa, meter campos raros o textos gigantes. Es una cerca baja, no una
+// cerradura: alcanza para un grupo chico de vecinos que se conocen.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Texto opcional de hasta n caracteres.
+    function txt(d, k, n) {
+      return !(k in d) || (d[k] is string && d[k].size() <= n);
+    }
+    function num(d, k) {
+      return !(k in d) || d[k] is number;
+    }
+    function bool(d, k) {
+      return !(k in d) || d[k] is bool;
+    }
+
+    function perfilOk(p) {
+      return p is map
+        && p.keys().hasOnly(['whatsapp','fijo','fijoPosible','fijoCosto','electromedico','medicacion','movilidad','menor','replicar'])
+        && bool(p,'whatsapp') && bool(p,'fijo') && bool(p,'fijoPosible')
+        && bool(p,'electromedico') && bool(p,'medicacion') && bool(p,'movilidad')
+        && bool(p,'menor') && bool(p,'replicar') && txt(p,'fijoCosto',120);
+    }
+
+    match /casas/{casaId} {
+      allow read: if true;
+      allow create, update: if casaId.matches('^[a-z0-9-]{1,60}$')
+        && request.resource.data.keys().hasOnly(['nombre','color','nota','actualizadoEn','perfil'])
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0
+        && request.resource.data.nombre.size() <= 80
+        && (!('color' in request.resource.data) || request.resource.data.color in ['grey','verde','amarillo','naranja','rojo'])
+        && txt(request.resource.data,'nota',500)
+        && txt(request.resource.data,'actualizadoEn',40)
+        && (!('perfil' in request.resource.data) || perfilOk(request.resource.data.perfil));
+      allow delete: if false;
+    }
+
+    match /estado/alerta {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['nivel','actualizadoPor','actualizadoEn'])
+        && request.resource.data.nivel in ['ninguna','amarilla','naranja','roja']
+        && txt(request.resource.data,'actualizadoPor',80)
+        && txt(request.resource.data,'actualizadoEn',40);
+      allow delete: if false;
+    }
+
+    match /roles/{rolId} {
+      allow read: if true;
+      allow create, update: if rolId.matches('^(alerta|vehiculo|generador|botiquin|enlace|tramo[0-9]{1,2})$')
+        && request.resource.data.keys().hasOnly(['nombre','titular','suplente','contacto','casasIds','casas'])
+        && txt(request.resource.data,'nombre',80)
+        && txt(request.resource.data,'titular',80)
+        && txt(request.resource.data,'suplente',80)
+        && txt(request.resource.data,'contacto',120)
+        && txt(request.resource.data,'casas',3000)
+        && (!('casasIds' in request.resource.data) || (request.resource.data.casasIds is list && request.resource.data.casasIds.size() <= 100));
+      allow delete: if false;
+    }
+
+    match /fondo/resumen {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['saldoDigital','efectivoFisico','efectivoUbicacion','tope','custodio','aporte','aliasPago','linkPago','movimientos'])
+        && num(request.resource.data,'saldoDigital')
+        && num(request.resource.data,'efectivoFisico')
+        && num(request.resource.data,'tope')
+        && txt(request.resource.data,'efectivoUbicacion',200)
+        && txt(request.resource.data,'custodio',80)
+        && txt(request.resource.data,'aporte',200)
+        && txt(request.resource.data,'aliasPago',120)
+        && txt(request.resource.data,'linkPago',300)
+        && (!('movimientos' in request.resource.data) || (request.resource.data.movimientos is list && request.resource.data.movimientos.size() <= 200));
+      allow delete: if false;
+    }
+
+    match /telefonos/utiles {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['medicos','defensaCivil','bomberos','ambiental','etac','otros'])
+        && txt(request.resource.data,'medicos',60)
+        && txt(request.resource.data,'defensaCivil',60)
+        && txt(request.resource.data,'bomberos',60)
+        && txt(request.resource.data,'ambiental',60)
+        && txt(request.resource.data,'etac',60)
+        && txt(request.resource.data,'otros',1000);
+      allow delete: if false;
+    }
+
+    match /config/general {
+      allow read: if true;
+      allow create, update: if request.resource.data.keys().hasOnly(['linkTablero'])
+        && txt(request.resource.data,'linkTablero',300);
+      allow delete: if false;
+    }
+
+    // Todo lo demás, cerrado.
+    match /{cualquierCosa=**} {
+      allow read, write: if false;
+    }
+  }
+}

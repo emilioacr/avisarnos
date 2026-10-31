@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Importar datos a Avisarnos</title>
+<!-- Copyright (C) 2026 theorIA. SPDX-License-Identifier: AGPL-3.0-only -->
+<meta name="robots" content="noindex">
+<style>
+:root{--bg:#f5f3ee;--card:#fff;--fg:#20201c;--muted:#6b675e;--border:#ddd8cc;--accent:#2f5d50;}
+@media (prefers-color-scheme: dark){:root{--bg:#15171a;--card:#1f2226;--fg:#eceae4;--muted:#9a968c;--border:#33363a;--accent:#6fae9b;}}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+main{max-width:560px;margin:0 auto;padding:20px 16px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;}
+button{font:inherit;border:none;border-radius:10px;padding:12px 16px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;}
+button:disabled{opacity:.5;}
+.muted{color:var(--muted);font-size:.88rem;}
+pre{white-space:pre-wrap;font-size:.8rem;margin:0;}
+</style>
+</head>
+<body>
+<main>
+<h1 style="font-size:1.25rem">Importar los datos a Avisarnos</h1>
+<p class="muted">Esta página copia a Avisarnos los datos de un archivo .json que tengas guardado (por ejemplo, los que se exportaron de la versión anterior). Los datos no están en esta página: los elegís desde tu teléfono o tu computadora. Si un dato ya existe en Avisarnos, no lo pisa: lo saltea.</p>
+<div class="card"><label><strong>1. Elegí el archivo de datos</strong><br><input type="file" id="archivo" accept=".json,application/json" style="margin-top:8px"></label></div>
+<div class="card">
+  <p style="margin-top:0"><strong>2. Qué se va a copiar</strong></p>
+  <div id="lista" class="muted">Todavía no elegiste ningún archivo.</div>
+</div>
+<button id="btn" disabled>3. Importar datos</button>
+<div class="card" style="margin-top:12px"><pre id="log">Esperando…</pre></div>
+<p class="muted">El archivo de datos tiene nombres y teléfonos de vecinos: no lo subas al repositorio de GitHub ni lo compartas en grupos.</p>
+</main>
+<script src="vendor/firebase-app-compat.js"></script>
+<script src="vendor/firebase-firestore-compat.js"></script>
+<script src="config.js"></script>
+<script>
+var DATOS = null;
+(function(){
+  var log=document.getElementById("log"), btn=document.getElementById("btn");
+  function escribir(t){ log.textContent += "\n"+t; }
+  var RUTA_OK=/^(casas\/[a-z0-9-]{1,60}|estado\/alerta|roles\/(alerta|vehiculo|generador|botiquin|enlace|tramo[0-9]{1,2})|fondo\/resumen|telefonos\/utiles|config\/general)$/;
+  function escH(t){ return String(t).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+  document.getElementById("archivo").addEventListener("change", function(ev){
+    var f=ev.target.files && ev.target.files[0]; DATOS=null; btn.disabled=true;
+    if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var d=JSON.parse(r.result);
+        if(!d || typeof d!=="object" || Array.isArray(d)) throw new Error("formato");
+        var malas=Object.keys(d).filter(function(k){ return !RUTA_OK.test(k) || !d[k] || typeof d[k]!=="object"; });
+        if(malas.length) throw new Error("rutas: "+malas.join(", "));
+        DATOS=d;
+        document.getElementById("lista").innerHTML = Object.keys(d).map(function(k){
+          var x=d[k]; return "• "+escH(k)+(x.nombre?" ("+escH(x.nombre)+")":x.titular?" ("+escH(x.titular)+")":"");
+        }).join("<br>");
+        btn.disabled=false; log.textContent="Archivo listo. Tocá Importar datos.";
+      }catch(e){
+        document.getElementById("lista").textContent="Ese archivo no tiene el formato esperado ("+e.message+").";
+      }
+    };
+    r.readAsText(f);
+  });
+  var cfg=window.FIREBASE_CONFIG;
+  if(!cfg || /PEGAR/.test(cfg.apiKey||"PEGAR")){ log.textContent="Falta completar config.js con los datos de Firebase."; btn.disabled=true; return; }
+  firebase.initializeApp(cfg);
+  var db=firebase.firestore();
+  btn.addEventListener("click", async function(){
+    if(!DATOS) return; btn.disabled=true; log.textContent="Importando…";
+    var ok=0, salteados=0, errores=0;
+    for(var ruta in DATOS){
+      try{
+        var ref=db.doc(ruta);
+        var snap=await ref.get({source:"server"});
+        if(snap.exists){ salteados++; escribir("Ya existía, lo salteo: "+ruta); continue; }
+        await ref.set(DATOS[ruta]); ok++; escribir("Copiado: "+ruta);
+      }catch(e){ errores++; escribir("Error en "+ruta+": "+(e.code||e.message)); }
+    }
+    escribir("\nListo. Copiados: "+ok+". Salteados: "+salteados+". Errores: "+errores+".");
+    if(errores){ escribir("Si los errores dicen permission-denied, revisá que las reglas de firestore.rules estén publicadas en Firebase."); btn.disabled=false; }
+  });
+})();
+</script>
+</body>
+</html>

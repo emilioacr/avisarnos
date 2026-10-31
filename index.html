@@ -1,0 +1,1421 @@
+<!doctype html>
+<!--
+  Avisarnos
+  Copyright (C) 2026 theorIA
+
+  Este programa es software libre: podés redistribuirlo y modificarlo bajo los
+  términos de la Licencia Pública General Affero de GNU (AGPL), versión 3,
+  publicada por la Free Software Foundation.
+
+  Se distribuye con la esperanza de que sea útil, pero SIN NINGUNA GARANTÍA,
+  ni siquiera la garantía implícita de COMERCIABILIDAD o APTITUD PARA UN
+  PROPÓSITO PARTICULAR. Ver el texto completo en el archivo LICENSE.
+
+  Si publicás una versión modificada en internet, tenés que ofrecer su código
+  fuente a quienes la usen (sección 13 de la licencia).
+
+  SPDX-License-Identifier: AGPL-3.0-only
+-->
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Avisarnos</title>
+<meta name="apple-mobile-web-app-title" content="Avisarnos">
+<meta name="application-name" content="Avisarnos">
+<meta name="description" content="Protocolo de emergencia vecinal ante inundación y corte de rutas, Salsipuedes.">
+<meta name="theme-color" content="#2f5d50">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>html{scroll-padding-top:env(safe-area-inset-top,0px)} body{margin:0; font-size:14px; padding-top:env(safe-area-inset-top,0px);}</style>
+<style>
+:root{
+  --bg:#f5f3ee; --card:#ffffff; --fg:#20201c; --muted:#6b675e; --border:#ddd8cc;
+  --accent:#2f5d50; --accent-fg:#ffffff;
+  --green:#2e7d4f; --green-bg:#e4f3e9;
+  --yellow:#a67a00; --yellow-bg:#fbf0d4;
+  --red:#b3261e; --red-bg:#fbe4e2;
+  --orange:#c15a00; --orange-bg:#fce6d2;
+  --grey:#6b675e; --grey-bg:#e8e5dd;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171a; --card:#1f2226; --fg:#eceae4; --muted:#9a968c; --border:#33363a;
+    --accent:#6fae9b; --accent-fg:#0d1210;
+    --green:#6fcf97; --green-bg:#163322;
+    --yellow:#e0b64d; --yellow-bg:#352b10;
+    --red:#e5736a; --red-bg:#3a1817;
+    --orange:#e8974a; --orange-bg:#3a2510;
+    --grey:#9a968c; --grey-bg:#2a2d31;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15171a; --card:#1f2226; --fg:#eceae4; --muted:#9a968c; --border:#33363a;
+  --accent:#6fae9b; --accent-fg:#0d1210;
+  --green:#6fcf97; --green-bg:#163322;
+  --yellow:#e0b64d; --yellow-bg:#352b10;
+  --red:#e5736a; --red-bg:#3a1817;
+  --orange:#e8974a; --orange-bg:#3a2510;
+  --grey:#9a968c; --grey-bg:#2a2d31;
+  color-scheme: dark;
+}
+*{box-sizing:border-box;}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+.app{
+  padding-left:max(16px, env(safe-area-inset-left,0px));
+  padding-right:max(16px, env(safe-area-inset-right,0px));
+  padding-block:16px;
+  padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));
+  max-width:560px; margin:0 auto;
+}
+h1{font-size:1.25rem; margin:0 0 2px; text-wrap:balance;}
+h2{margin:0 0 10px; color:var(--muted); font-weight:600; letter-spacing:.02em; text-transform:uppercase; font-size:.8rem;}
+.sub{color:var(--muted); font-size:.85rem; margin:0 0 18px;}
+.card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:12px;}
+.card.mine{border-color:var(--accent); border-width:2px;}
+details{margin-bottom:10px;}
+details summary{display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:600; padding:4px 0; list-style:none;}
+details summary::-webkit-details-marker{display:none;}
+details summary .car{margin-left:auto; transition:transform .15s;}
+details[open] summary .car{transform:rotate(90deg);}
+details .steps{margin:8px 0 4px 0; padding-left:0; font-size:.9rem;}
+details .steps li{margin-bottom:6px; line-height:1.4;}
+details .steps{list-style:none;}
+details .steps li{padding-left:22px; position:relative;}
+details .steps li::before{content:counter(li); counter-increment:li; position:absolute; left:0; top:0; width:16px; height:16px; border-radius:50%; background:var(--grey-bg); color:var(--muted); font-size:.68rem; font-weight:700; display:flex; align-items:center; justify-content:center;}
+details .steps{counter-reset:li;}
+.row{display:flex; align-items:center; gap:10px; min-width:0;}
+.row + .row{margin-top:10px;}
+.grow{flex:1; min-width:0;}
+.dot{width:14px; height:14px; border-radius:50%; flex:none;}
+.dot.verde{background:var(--green);}
+.dot.amarillo{background:var(--yellow);}
+.dot.naranja{background:var(--orange);}
+.dot.rojo{background:var(--red);}
+.dot.grey{background:var(--grey);}
+.estado-txt{font-size:.78rem; font-weight:600; margin-top:1px;}
+.estado-txt.verde{color:var(--green);}
+.estado-txt.amarillo{color:var(--yellow);}
+.estado-txt.naranja{color:var(--orange);}
+.estado-txt.rojo{color:var(--red);}
+.recos{margin:10px 0 0; padding-left:18px; font-size:.86rem; color:var(--fg); line-height:1.4;}
+.recos li{margin-bottom:4px;}
+.recos-title{font-size:.8rem; font-weight:700; margin-top:12px; color:var(--fg);}
+.nivel-tag{display:inline-block; font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:999px; margin-right:6px;}
+.nivel-tag.amarilla{background:var(--yellow-bg); color:var(--yellow);}
+.nivel-tag.naranja{background:var(--orange-bg); color:var(--orange);}
+.nivel-tag.roja{background:var(--red-bg); color:var(--red);}
+a{color:var(--accent);}
+.prep-total{font-size:.78rem; font-weight:700; color:var(--muted); white-space:nowrap;}
+#prepGrupos details{border-top:1px solid var(--border); margin:0; padding:6px 0;}
+#prepGrupos details:first-child{margin-top:8px;}
+#prepGrupos summary{font-size:.92rem;}
+#prepGrupos summary .cnt{font-size:.76rem; font-weight:700; color:var(--muted); white-space:nowrap;}
+#prepGrupos summary .cnt.done{color:var(--green);}
+#prepGrupos .gsub{font-size:.8rem; color:var(--muted); margin:2px 0 4px;}
+#prepGrupos .checkrow{align-items:flex-start; padding:9px 0;}
+#prepGrupos .checkrow .q{font-size:.88rem; line-height:1.4;}
+#prepGrupos .checkrow input{margin-top:1px;}
+#prepGrupos .checkrow.ok .q{color:var(--muted);}
+.pill{display:inline-flex; align-items:center; gap:4px; font-size:.72rem; padding:3px 8px 3px 6px; border-radius:999px; background:var(--grey-bg); color:var(--muted); margin:3px 4px 0 0; white-space:nowrap;}
+.pill .i{width:13px; height:13px;}
+.name{font-weight:600;}
+.muted{color:var(--muted); font-size:.82rem;}
+.banner{border-radius:14px; padding:16px; margin-bottom:12px;}
+.banner.ninguna{background:var(--grey-bg); color:var(--grey);}
+.banner.amarilla{background:var(--yellow-bg); color:var(--yellow);}
+.banner.naranja{background:var(--orange-bg); color:var(--orange);}
+.banner.roja{background:var(--red-bg); color:var(--red);}
+.banner .lvl{font-size:1.25rem; font-weight:700; margin:0 0 2px;}
+.banner .meta{font-size:.8rem; opacity:.9; color:var(--fg);}
+.banner .foot{font-size:.74rem; margin-top:10px; color:var(--fg); opacity:.75;}
+.btnrow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+button{font:inherit; border:none; border-radius:10px; padding:10px 14px; cursor:pointer; display:inline-flex; align-items:center; gap:6px;}
+button:disabled{opacity:.5;}
+.btn-ghost{background:transparent; border:1px solid var(--border); color:var(--fg);}
+.btn-accent{background:var(--accent); color:var(--accent-fg); font-weight:600;}
+.btn-sm{padding:7px 11px; font-size:.82rem; border-radius:8px;}
+a.btn-accent{text-decoration:none; justify-content:center;}
+.choice-row{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px;}
+.choice{border-radius:12px; padding:14px 6px; text-align:center; font-weight:700; font-size:.82rem; border:2px solid transparent; background:var(--grey-bg); color:var(--fg); display:flex; flex-direction:column; align-items:center; gap:6px;}
+.choice .i{width:22px; height:22px;}
+.choice.sel-verde{background:var(--green-bg); color:var(--green); border-color:var(--green);}
+.choice.sel-amarillo{background:var(--yellow-bg); color:var(--yellow); border-color:var(--yellow);}
+.choice.sel-naranja{background:var(--orange-bg); color:var(--orange); border-color:var(--orange);}
+.choice.sel-rojo{background:var(--red-bg); color:var(--red); border-color:var(--red);}
+label.field{display:block; margin-top:12px;}
+label.field span{display:block; font-size:.85rem; margin-bottom:5px; color:var(--muted);}
+input[type=text],input[type=number],textarea,select{
+  width:100%; font:inherit; padding:10px 11px; border-radius:10px; border:1px solid var(--border);
+  background:var(--bg); color:var(--fg);
+}
+textarea{resize:vertical; min-height:50px;}
+.checkrow{display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border);}
+.checkrow:last-child{border-bottom:none;}
+.checkrow input{width:20px; height:20px; flex:none;}
+.checkrow .q{font-size:.9rem;}
+.i{width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:none;}
+nav.tabs{
+  position:fixed; left:0; right:0; bottom:0; display:flex;
+  background:var(--card); border-top:1px solid var(--border); z-index:10;
+}
+nav.tabs .inner{
+  display:flex; width:100%; max-width:560px; margin:0 auto;
+  padding-left:max(10px, env(safe-area-inset-left,0px));
+  padding-right:max(10px, env(safe-area-inset-right,0px));
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+nav.tabs button{
+  flex:1; background:none; border-radius:0; padding:12px 4px 10px; font-size:.7rem;
+  color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:3px; justify-content:center;
+}
+nav.tabs button .i{width:20px; height:20px;}
+nav.tabs button.active{color:var(--accent); font-weight:700;}
+[hidden]{display:none!important;}
+.empty{color:var(--muted); font-size:.85rem; padding:10px 0;}
+#msg{
+  position:fixed; left:16px; right:16px; bottom:calc(76px + env(safe-area-inset-bottom,0px));
+  background:var(--fg); color:var(--bg); padding:10px 14px; border-radius:10px; font-size:.85rem;
+  max-width:560px; margin:0 auto; text-align:center; z-index:20;
+}
+.readonly-note{background:var(--grey-bg); color:var(--muted); font-size:.8rem; padding:8px 12px; border-radius:10px; margin-bottom:12px;}
+.timeago{font-size:.75rem; color:var(--muted); white-space:nowrap;}
+.copyrow{display:flex; align-items:center; gap:8px; background:var(--grey-bg); border-radius:10px; padding:10px 12px; margin-top:8px;}
+.copyrow code{flex:1; min-width:0; overflow:auto; font-size:.85rem; white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<svg hidden aria-hidden="true">
+  <symbol id="ic-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.2"/><rect x="13" y="3" width="8" height="8" rx="1.2"/><rect x="3" y="13" width="8" height="8" rx="1.2"/><rect x="13" y="13" width="8" height="8" rx="1.2"/></symbol>
+  <symbol id="ic-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9"/></symbol>
+  <symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17.5" cy="9" r="2.3"/><path d="M15.8 14.3c2.5.4 4.2 2.5 4.2 5.7"/></symbol>
+  <symbol id="ic-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24"><path d="M4 12.5l5.2 5.2L20 6.5"/></symbol>
+  <symbol id="ic-triangle" viewBox="0 0 24 24"><path d="M12 3.5L21 19H3z"/><path d="M12 9.5v4.5"/><path d="M12 17v.2"/></symbol>
+  <symbol id="ic-octagon" viewBox="0 0 24 24"><path d="M8 3h8l5 5v8l-5 5H8l-5-5V8z"/><path d="M12 7.5V13"/><path d="M12 16.3v.2"/></symbol>
+  <symbol id="ic-bell" viewBox="0 0 24 24"><path d="M6 10a6 6 0 1112 0c0 4 1.4 5.3 1.7 5.6H4.3C4.6 15.3 6 14 6 10z"/><path d="M10 19a2 2 0 004 0"/></symbol>
+  <symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-4 4z"/></symbol>
+  <symbol id="ic-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.3h2"/></symbol>
+  <symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 2L5 14h6l-1 8 9-12h-6z"/></symbol>
+  <symbol id="ic-pill" viewBox="0 0 24 24"><path d="M8.3 15.7a4.1 4.1 0 005.8 0l5.6-5.6a4.1 4.1 0 00-5.8-5.8l-5.6 5.6a4.1 4.1 0 000 5.8z"/><path d="M11 10.5l2.5 2.5"/></symbol>
+  <symbol id="ic-cane" viewBox="0 0 24 24"><circle cx="9" cy="5" r="2"/><path d="M9 9v5.5"/><path d="M9 11l-3 2"/><path d="M9 15l-2.5 6"/><path d="M9 15l3.5 2"/><path d="M12.5 17l1.7 4"/></symbol>
+  <symbol id="ic-child" viewBox="0 0 24 24"><circle cx="12" cy="6.5" r="2.7"/><path d="M8 20c0-4.3 1.6-7 4-7s4 2.7 4 7"/></symbol>
+  <symbol id="ic-share" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 13v6a2 2 0 002 2h10a2 2 0 002-2v-6"/></symbol>
+  <symbol id="ic-car" viewBox="0 0 24 24"><path d="M3 13l2-5a2 2 0 012-2h10a2 2 0 012 2l2 5"/><rect x="2" y="13" width="20" height="5.5" rx="2"/><circle cx="7.5" cy="19" r="1.6"/><circle cx="16.5" cy="19" r="1.6"/></symbol>
+  <symbol id="ic-plug" viewBox="0 0 24 24"><path d="M9 2v6"/><path d="M15 2v6"/><path d="M6 8h12v3.5a6 6 0 01-12 0z"/><path d="M12 17.5v4"/></symbol>
+  <symbol id="ic-cross" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 7.5v9"/><path d="M7.5 12h9"/></symbol>
+  <symbol id="ic-link" viewBox="0 0 24 24"><path d="M9 15l6-6"/><path d="M8 12l-2 2a4 4 0 005.5 5.5l3-3"/><path d="M16 12l2-2a4 4 0 00-5.5-5.5l-3 3"/></symbol>
+  <symbol id="ic-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5V5.5a2 2 0 00-2-2h-9a2 2 0 00-2 2v9a2 2 0 002 2h3"/></symbol>
+  <symbol id="ic-edit" viewBox="0 0 24 24"><path d="M4 20l1-4 11-11 3 3-11 11z"/><path d="M14.5 6.5l3 3"/></symbol>
+  <symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+  <symbol id="ic-list" viewBox="0 0 24 24"><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/><path d="M9 6h11"/><path d="M9 12h11"/><path d="M9 18h11"/></symbol>
+  <symbol id="ic-chevron" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="ic-bag" viewBox="0 0 24 24"><path d="M8 7V5.5A2.5 2.5 0 0110.5 3h3A2.5 2.5 0 0116 5.5V7"/><rect x="4" y="7" width="16" height="14" rx="3"/><path d="M4 12.5h16"/><path d="M10.5 12.5v2h3v-2"/></symbol>
+  <symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></symbol>
+  <symbol id="ic-rain" viewBox="0 0 24 24"><path d="M7 15a4.5 4.5 0 01-.6-9A5.5 5.5 0 0117 7.5a3.8 3.8 0 01.5 7.5z"/><path d="M8.5 18l-1 2.5"/><path d="M12.5 18l-1 2.5"/><path d="M16.5 18l-1 2.5"/></symbol>
+</svg>
+
+<div class="app">
+
+  <div id="fatal" class="card" hidden>
+    <strong id="fatalTitulo">No se pudo conectar.</strong>
+    <p class="muted" id="fatalTexto" style="margin:6px 0 0">Revisá que tengas internet y recargá la página.</p>
+  </div>
+
+  <div id="readonly-note" class="readonly-note" hidden>Estás viendo el tablero en modo solo lectura. Para reportar el estado de tu casa pedile a quien administra este tablero que te dé permiso de edición.</div>
+
+  <!-- TABLERO -->
+  <section id="tab-tablero">
+    <h1>Avisarnos</h1>
+    <p class="sub">Protocolo de emergencia de la cuadra ante inundación y corte de rutas — Salsipuedes</p>
+
+    <div id="alertaBanner" class="banner ninguna">
+      <div class="row" style="align-items:flex-start">
+        <svg class="i" style="width:22px;height:22px"><use href="#ic-bell"></use></svg>
+        <div class="grow">
+          <div class="lvl">Alerta: cargando…</div>
+          <div class="meta">&nbsp;</div>
+        </div>
+      </div>
+      <div id="alertaRecos"></div>
+      <button class="btn-ghost btn-sm" id="toggleAlertaEdit" style="margin-top:10px"><svg class="i"><use href="#ic-edit"></use></svg>Actualizar alerta</button>
+      <div class="btnrow" id="alertaBtns" hidden></div>
+      <div class="foot">Se declara a mano según el aviso del Servicio Meteorológico o de Defensa Civil. Todavía no hay conexión automática con esas fuentes.</div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <svg class="i" style="width:20px;height:20px"><use href="#ic-coin"></use></svg>
+        <div class="grow"><div class="muted" style="font-size:.78rem">Fondo común</div><div style="font-weight:700" id="fondoMiniSaldo">—</div></div>
+        <button class="btn-ghost btn-sm" id="irAFondoBtn">Ver</button>
+      </div>
+    </div>
+
+    <div class="row" style="margin-bottom:8px">
+      <div class="grow"><label class="field" style="margin-top:0"><span>Mostrar</span>
+        <select id="filtroTramoSelect"><option value="">Toda la cuadra</option></select>
+      </label></div>
+    </div>
+    <h2>Estado de cada casa</h2>
+    <div id="casasList"></div>
+  </section>
+
+  <!-- MI CASA -->
+  <section id="tab-micasa" hidden>
+    <h1>Mi casa</h1>
+    <p class="sub">El perfil se completa una sola vez. El estado se reporta cuando el protocolo está activo.</p>
+
+    <div id="onboarding" class="card" hidden>
+      <h2 style="margin-top:0">¿Cuál es tu casa?</h2>
+      <div id="onboardingList"></div>
+      <p class="empty" id="onboardingVacio" hidden>Todavía no hay ninguna casa cargada en el tablero.</p>
+      <p class="muted" style="margin:14px 0 8px">¿Tu casa no está en la lista?</p>
+      <div class="row"><div class="grow">
+        <input type="text" id="houseNameInput" placeholder="Nombre o apellido de familia">
+      </div></div>
+      <div class="btnrow"><button class="btn-accent" id="createHouseBtn">Crear mi casa</button></div>
+    </div>
+
+    <div id="miCasaContent" hidden>
+
+      <div class="card">
+        <div class="row"><h2 class="grow" style="margin:0">Perfil de la casa</h2>
+          <button class="btn-ghost btn-sm" id="perfilEditBtn"><svg class="i"><use href="#ic-edit"></use></svg>Editar</button>
+        </div>
+
+        <div id="perfilView"></div>
+
+        <div id="perfilEditFields" hidden>
+          <div class="checkrow"><svg class="i"><use href="#ic-chat"></use></svg><div class="q grow">Tenemos WhatsApp con datos</div><input type="checkbox" id="p_whatsapp"></div>
+          <div class="checkrow"><svg class="i"><use href="#ic-phone"></use></svg><div class="q grow">Tenemos teléfono fijo</div><input type="checkbox" id="p_fijo"></div>
+          <div id="fijoExtra" class="card" style="margin:0 0 0;background:var(--grey-bg);border-radius:10px" hidden>
+            <div class="checkrow" style="border-bottom:none"><svg class="i"><use href="#ic-phone"></use></svg><div class="q grow">¿Podríamos conseguir una línea fija si hiciera falta?</div><input type="checkbox" id="p_fijoPosible"></div>
+            <label class="field" style="margin-top:0"><span>Costo estimado (instalación + línea), si lo averiguaste</span><input type="text" id="p_fijoCosto" placeholder="Ej: $40.000 instalación + $9.000 por mes"></label>
+          </div>
+          <div class="checkrow"><svg class="i"><use href="#ic-bolt"></use></svg><div class="q grow">Alguien depende de electricidad para un equipo médico</div><input type="checkbox" id="p_electromedico"></div>
+          <div class="checkrow"><svg class="i"><use href="#ic-pill"></use></svg><div class="q grow">Alguien toma una medicación que necesita continuidad o cadena de frío</div><input type="checkbox" id="p_medicacion"></div>
+          <div class="checkrow"><svg class="i"><use href="#ic-cane"></use></svg><div class="q grow">Hay alguien mayor o con movilidad reducida</div><input type="checkbox" id="p_movilidad"></div>
+          <div class="checkrow"><svg class="i"><use href="#ic-child"></use></svg><div class="q grow">Hay menores de edad en la casa</div><input type="checkbox" id="p_menor"></div>
+          <div class="checkrow" style="border-bottom:none"><svg class="i"><use href="#ic-share"></use></svg><div class="q grow">Conozco a alguien a quien le podría interesar armar algo parecido</div><input type="checkbox" id="p_replicar"></div>
+          <p class="muted" style="margin-top:4px">Si marcás la última, sos vos quien le ofrece presentarlo — nunca se lo contacta directo con tu dato.</p>
+          <div class="btnrow"><button class="btn-accent" id="guardarPerfilBtn"><svg class="i"><use href="#ic-check"></use></svg>Guardar perfil</button><button class="btn-ghost" id="cancelarPerfilBtn">Cancelar</button></div>
+        </div>
+      </div>
+
+      <div class="card" id="invitarCard" hidden>
+        <div class="row"><h2 class="grow" style="margin:0">Invitar a sumar otra casa</h2>
+          <button class="btn-ghost btn-sm" id="linkTableroEditBtn"><svg class="i"><use href="#ic-edit"></use></svg>Link</button>
+        </div>
+        <div id="linkTableroEdit" hidden>
+          <label class="field" style="margin-top:0"><span>Link de Avisarnos (lo pegás una sola vez)</span><input type="text" id="linkTableroInput" placeholder="https://usuario.github.io/avisarnos/"></label>
+          <div class="btnrow"><button class="btn-accent btn-sm" id="linkTableroGuardarBtn">Guardar</button><button class="btn-ghost btn-sm" id="linkTableroCancelarBtn">Cancelar</button></div>
+        </div>
+        <textarea id="invitarTexto" rows="5" readonly></textarea>
+        <div class="btnrow"><button class="btn-accent btn-sm" id="copiarInvitacionBtn"><svg class="i"><use href="#ic-copy"></use></svg>Copiar invitación</button></div>
+        <p class="muted" style="margin-top:8px">Para tenerlo a mano sin buscarlo de nuevo: en Android, menú ⋮ del navegador → "Agregar a pantalla de inicio". En iPhone, botón compartir → "Agregar a inicio".</p>
+      </div>
+
+      <div class="card" id="estadoInactivoCard">
+        <h2>Estado actual</h2>
+        <div class="row"><svg class="i" style="width:22px;height:22px"><use href="#ic-bell"></use></svg>
+          <p class="muted" style="margin:0">El protocolo todavía no está activo. Vas a poder reportar el estado de tu casa cuando se declare alerta naranja o roja.</p>
+        </div>
+      </div>
+
+      <div class="card" id="estadoActivoCard" hidden>
+        <h2>Estado actual</h2>
+        <div class="choice-row" id="colorChoices">
+          <div class="choice" data-color="verde"><svg class="i"><use href="#ic-check"></use></svg>Estamos bien</div>
+          <div class="choice" data-color="amarillo"><svg class="i"><use href="#ic-triangle"></use></svg>Hay un problema, puede esperar</div>
+          <div class="choice" data-color="naranja"><svg class="i"><use href="#ic-clock"></use></svg>Vamos a necesitar ayuda en unas horas</div>
+          <div class="choice" data-color="rojo"><svg class="i"><use href="#ic-octagon"></use></svg>Necesitamos ayuda ya</div>
+        </div>
+        <label class="field"><span>Nota (opcional, ej: "sin luz desde las 23hs")</span>
+          <textarea id="notaInput" rows="2"></textarea>
+        </label>
+        <div class="btnrow"><button class="btn-accent" id="guardarEstadoBtn">Guardar estado</button></div>
+        <p class="muted" id="estadoActualizado" style="margin-top:8px"></p>
+      </div>
+
+      <p class="muted">Casa: <strong id="miCasaNombre"></strong> · <button class="btn-ghost btn-sm" id="cambiarCasaBtn">No es mi casa</button></p>
+    </div>
+
+    <div class="card" id="prepCard">
+      <div class="row"><svg class="i" style="width:20px;height:20px"><use href="#ic-bag"></use></svg><h2 class="grow" style="margin:0">Estar preparados</h2><span class="prep-total" id="prepTotal"></span></div>
+      <p class="muted" style="margin:8px 0 4px">Para tener listo antes de la temporada de lluvias, no cuando ya está lloviendo. Lo que tildás queda guardado solo en este teléfono: nadie más lo ve.</p>
+      <div id="prepGrupos"></div>
+      <p class="muted" style="margin:10px 0 0;font-size:.76rem">Armado a partir de las recomendaciones de <a href="https://www.argentina.gob.ar/sinagir/kit-de-emergencias" target="_blank" rel="noopener">SINAGIR</a>, el <a href="https://www.argentina.gob.ar/salud/desastres/medidas-preventivas-basicas" target="_blank" rel="noopener">Ministerio de Salud</a>, el <a href="https://www.argentina.gob.ar/economia/energia/programa-hogar/uso-responsable-de-las-garrafas" target="_blank" rel="noopener">Programa Hogar</a> (garrafas) y la <a href="https://www.redcross.org/content/dam/redcross/atg/PDF_s/Preparedness___Disaster_Recovery/Disaster_Preparedness/Food_Safety/Food_and_Water-Spanish.revised_7-09.pdf" target="_blank" rel="noopener">Cruz Roja Americana</a> (cantidad de agua).</p>
+      <div class="btnrow"><button class="btn-ghost btn-sm" id="prepResetBtn">Empezar de nuevo (nueva temporada)</button></div>
+    </div>
+  </section>
+
+  <!-- ROLES -->
+  <section id="tab-roles" hidden>
+    <h1>Roles y tramos</h1>
+    <p class="sub">Definidos antes de que llueva. Tocá el lápiz para completar o corregir.</p>
+
+    <div class="card">
+      <h2>Casas cargadas</h2>
+      <div id="casasCargadasList"></div>
+      <div class="btnrow"><button class="btn-ghost btn-sm" id="agregarCasaBtn"><svg class="i"><use href="#ic-plus"></use></svg>Agregar casa</button></div>
+      <div id="agregarCasaForm" hidden style="margin-top:8px">
+        <input type="text" id="nuevaCasaInput" placeholder="Nombre o apellido de familia">
+        <div class="btnrow"><button class="btn-accent btn-sm" id="nuevaCasaGuardarBtn">Crear</button><button class="btn-ghost btn-sm" id="nuevaCasaCancelarBtn">Cancelar</button></div>
+      </div>
+      <p class="muted" style="margin-top:8px">Esto crea la casa en el tablero para poder asignarla a un tramo, aunque esa familia todavía no haya entrado por su cuenta.</p>
+    </div>
+
+    <div class="card">
+      <h2>Responsable de alerta</h2>
+      <div id="role-alerta"></div>
+    </div>
+
+    <div class="card">
+      <h2>Circuito de llamado (tramos)</h2>
+      <div id="tramosList"></div>
+      <div class="btnrow"><button class="btn-ghost btn-sm" id="agregarTramoBtn"><svg class="i"><use href="#ic-plus"></use></svg>Agregar tramo</button></div>
+    </div>
+
+    <div class="card">
+      <h2>Roles de recursos</h2>
+      <div id="role-vehiculo"></div>
+      <div id="role-generador"></div>
+      <div id="role-botiquin"></div>
+      <div id="role-enlace"></div>
+    </div>
+  </section>
+
+  <!-- GUIA -->
+  <section id="tab-guia" hidden>
+    <h1>Guía: qué hace cada uno</h1>
+    <p class="sub">Los roles rotan. Conviene que todos sepan qué hacen los demás, porque en algún momento te va a tocar.</p>
+
+    <div class="card">
+      <div class="row"><h2 class="grow" style="margin:0">Teléfonos útiles</h2>
+        <button class="btn-ghost btn-sm" id="telEditBtn"><svg class="i"><use href="#ic-edit"></use></svg>Editar</button>
+      </div>
+      <div id="telView"></div>
+      <div id="telEditFields" hidden>
+        <label class="field" style="margin-top:0"><span>Emergencias médicas</span><input type="text" id="tel_medicos"></label>
+        <label class="field"><span>Defensa Civil</span><input type="text" id="tel_defensaCivil"></label>
+        <label class="field"><span>Bomberos</span><input type="text" id="tel_bomberos"></label>
+        <label class="field"><span>Emergencia ambiental</span><input type="text" id="tel_ambiental"></label>
+        <label class="field"><span>ETAC — Equipo Técnico de Acción ante Catástrofes (Sierras Chicas)</span><input type="text" id="tel_etac" placeholder="Completar cuando se tenga el número"></label>
+        <label class="field"><span>Otros (uno por línea)</span><textarea id="tel_otros" rows="2" placeholder="Ej: Cooperativa Telefónica de Salsipuedes (03543) ..."></textarea></label>
+        <div class="btnrow"><button class="btn-accent btn-sm" id="telGuardarBtn">Guardar</button><button class="btn-ghost btn-sm" id="telCancelarBtn">Cancelar</button></div>
+      </div>
+    </div>
+
+    <div class="card" id="elNinoCard">
+      <div class="row"><svg class="i" style="width:20px;height:20px"><use href="#ic-rain"></use></svg><h2 class="grow" style="margin:0">El Niño: qué es y qué hacer</h2></div>
+      <p style="font-size:.9rem;line-height:1.45;margin:10px 0 0">El Niño es un calentamiento del océano Pacífico en la zona del ecuador que cambia cuánto y cómo llueve en distintas partes del mundo. En Argentina suele traer más lluvia de lo normal, con tormentas que pueden anegar calles y provocar inundaciones. Para esta temporada, el Ministerio de Seguridad Nacional, a través de la Agencia Federal de Emergencias, tiene activo desde abril de 2026 un plan de coordinación con las provincias.</p>
+      <p class="muted" style="margin:8px 0 0">Esto es lo que recomienda el organismo nacional para cada nivel de alerta. Cuando se declara una alerta en el Tablero, las recomendaciones de ese nivel aparecen también arriba de todo, en el aviso de alerta.</p>
+      <div id="elNinoRecos"></div>
+      <p class="muted" style="margin:12px 0 0">Ante cualquier alerta, informate por las autoridades locales y tené a mano los teléfonos de esta página.</p>
+      <div class="btnrow"><a class="btn-ghost btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:7px 11px;font-size:.82rem;color:var(--fg)" href="https://www.argentina.gob.ar/seguridad/emergencias/elnino" target="_blank" rel="noopener"><svg class="i"><use href="#ic-link"></use></svg>Ver la página oficial completa</a></div>
+    </div>
+
+    <div class="card">
+      <h2>Qué resolvemos nosotros, qué resuelve lo oficial</h2>
+      <p class="muted" style="margin:0 0 8px">Esto nunca reemplaza el llamado oficial ante riesgo real. Es la organización previa para no depender solo de esperar que llegue la ayuda.</p>
+      <p style="margin:10px 0 4px;font-weight:600;font-size:.9rem">Lo resuelve el organismo oficial (Defensa Civil, ETAC, Bomberos, Protección Ambiental):</p>
+      <ul class="steps" style="list-style:disc;padding-left:18px;counter-reset:none">
+        <li style="padding-left:0">Declarar la alerta oficial y decidir una evacuación.</li>
+        <li style="padding-left:0">Rescate, cortes de ruta, atención médica de emergencia.</li>
+        <li style="padding-left:0">Daños grandes en la infraestructura, o cortes de luz/agua a nivel de red (el reclamo formal a la empresa).</li>
+        <li style="padding-left:0">Cualquier situación de riesgo real para la vida.</li>
+      </ul>
+      <p style="margin:10px 0 4px;font-weight:600;font-size:.9rem">Lo resolvemos nosotros, la cuadra:</p>
+      <ul class="steps" style="list-style:disc;padding-left:18px;counter-reset:none">
+        <li style="padding-left:0">Avisarnos entre vecinos cuando se activa una alerta oficial.</li>
+        <li style="padding-left:0">Saber quién tiene qué recurso (vehículo, generador, botiquín) y prestarlo para un problema puntual de una casa.</li>
+        <li style="padding-left:0">Un fondo común para gastos chicos de la emergencia.</li>
+        <li style="padding-left:0">Saber de antemano quién necesita ayuda prioritaria (mayores, menores, equipo médico), antes de que llegue cualquier ayuda externa.</li>
+        <li style="padding-left:0">Un solo llamado organizado a la empresa u organismo correspondiente en nombre de todos, en vez de siete llamados sueltos.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Cualquier casa, siempre</h2>
+      <ol class="steps">
+        <li>Antes de la temporada de lluvias, completá el Perfil de tu casa en "Mi casa" y repasá la lista "Estar preparados", que está en esa misma pestaña.</li>
+        <li>Cuando se declare alerta naranja o roja, tené a mano linterna, agua y el celular cargado. No hace falta salir de tu casa.</li>
+        <li>Reportá tu estado apenas puedas, con uno de los cuatro colores: verde si están bien; amarillo si hay un problema que puede esperar (ej: sin luz); naranja si todavía se aguanta pero en unas horas van a necesitar ayuda (ej: empieza a entrar agua, la batería del equipo médico dura poco, se termina la medicación); rojo si necesitan ayuda ya. Si no decís nada, se asume verde.</li>
+        <li>Si no tenés ningún tipo de señal, usá la seña visual pasiva (trapo o cartel en la ventana) y esperá a tu responsable de tramo. Nadie sale mientras hay peligro activo.</li>
+        <li>Después de la tormenta, participá de la reunión corta para anotar qué falló esta vez.</li>
+      </ol>
+    </div>
+
+    <details>
+      <summary><svg class="i"><use href="#ic-bell"></use></svg>Responsable de alerta (rota, un nombre por mes)<svg class="i car"><use href="#ic-chevron"></use></svg></summary>
+      <ol class="steps">
+        <li>Con pronóstico de tormenta fuerte, revisás el Servicio Meteorológico Nacional (zona Sierras Chicas) y los canales oficiales de Defensa Civil de Córdoba.</li>
+        <li>Si sube a naranja o roja, lo declarás en el Tablero (botón "Actualizar alerta") y avisás a cada responsable de tramo.</li>
+        <li>Cuando el temporal pasa y no hay más riesgo, volvés a poner "Sin alerta" en el Tablero.</li>
+      </ol>
+    </details>
+
+    <details>
+      <summary><svg class="i"><use href="#ic-users"></use></svg>Responsable de tramo (titular y suplente)<svg class="i car"><use href="#ic-chevron"></use></svg></summary>
+      <ol class="steps">
+        <li>Cuando se activa el protocolo, avisás a las casas de tu tramo: WhatsApp si hay señal, SMS si no alcanza para WhatsApp, seña visual si no hay señal de ningún tipo, en persona solo si es seguro.</li>
+        <li>Mirás el color de cada una de tus casas en el Tablero. Si alguna no reporta porque no tiene señal, la recorrés a pie solo cuando sea seguro salir.</li>
+        <li>Si una de tus casas tiene a alguien mayor, con movilidad reducida o un menor (lo ves en su Perfil), priorizala.</li>
+        <li>Si una casa marca naranja, avisás enseguida al enlace y a quien tenga el recurso que haga falta (vehículo, generador, botiquín), para que esté listo antes de que pase a rojo.</li>
+        <li>Si una casa marca rojo, primero se llama al 107, al 103 o al 100 según el caso. Después avisás al enlace.</li>
+        <li>Le pasás al enlace un resumen de tu tramo, no cada casa suelta.</li>
+        <li>No administrás recursos ni decidís nada por tu cuenta. Solo comunicás y reportás.</li>
+        <li>El Tablero no reemplaza esto: funciona mientras hay señal e internet. Si se corta todo, el aviso de voz, SMS o seña visual sigue siendo el único camino, y ahí tu tramo es imprescindible.</li>
+      </ol>
+    </details>
+
+    <details>
+      <summary><svg class="i"><use href="#ic-car"></use></svg>Vehículo, generador o botiquín<svg class="i car"><use href="#ic-chevron"></use></svg></summary>
+      <ol class="steps">
+        <li>Tenés el recurso disponible y accesible. No salís a recorrer la cuadra con él.</li>
+        <li>Si el enlace o un responsable de tramo te lo pide para un problema puntual de una casa, lo prestás.</li>
+        <li>Si el problema se repite igual en varias casas (ej: todos sin luz), tu recurso sirve solo para bancar algo crítico mientras se espera. La causa de fondo la resuelve el enlace llamando a la empresa, no vos.</li>
+      </ol>
+    </details>
+
+    <details>
+      <summary><svg class="i"><use href="#ic-link"></use></svg>Enlace con Defensa Civil / Municipalidad<svg class="i car"><use href="#ic-chevron"></use></svg></summary>
+      <ol class="steps">
+        <li>Recibís de cada responsable de tramo un resumen de su tramo, no casa por casa.</li>
+        <li>Separás dos tipos de problema: uno puntual de una sola casa lo resuelve la cuadra con lo que tiene (fondo común, generador, vehículo); uno que se repite igual en varias casas con la misma causa, hacés un solo llamado a la empresa correspondiente en nombre de todos.</li>
+        <li>Después de la emergencia, reportás los daños de la cuadra y coordinás la limpieza: primero las casas aisladas o con vecinos vulnerables.</li>
+      </ol>
+    </details>
+
+    <details>
+      <summary><svg class="i"><use href="#ic-coin"></use></svg>Custodio del fondo común (rota cada temporada)<svg class="i car"><use href="#ic-chevron"></use></svg></summary>
+      <ol class="steps">
+        <li>Guardás la plata aportada y anotás cada ingreso y egreso en la pestaña Fondo, visible para cualquier aportante.</li>
+        <li>Un gasto chico, hasta el tope definido, lo autorizás directo si te lo pide el responsable de turno del circuito de llamado, sin consulta previa.</li>
+        <li>Un gasto mayor al tope necesita acuerdo de al menos dos responsables de tramo.</li>
+        <li>Al cerrar la temporada, informás el saldo a todos los aportantes.</li>
+      </ol>
+    </details>
+
+    <p class="muted" style="margin-top:4px">Esto resume el protocolo completo de la cuadra. Ante riesgo real, siempre prima el 107, el 103 o el 100 por sobre lo que diga esta página.</p>
+    <p class="muted" id="licenciaNota" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">Avisarnos es software libre de theorIA, con licencia <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener">AGPL-3.0</a>. Cualquier barrio puede copiarlo y adaptarlo, siempre que comparta sus cambios con la misma licencia.<span id="fuenteLinkWrap" hidden> <a id="fuenteLink" href="#" target="_blank" rel="noopener">Ver el código fuente</a>.</span></p>
+  </section>
+
+  <!-- FONDO -->
+  <section id="tab-fondo" hidden>
+    <h1>Fondo común</h1>
+    <p class="sub">Caja chica para gastos puntuales de la emergencia. No cubre daños de las casas ni reemplaza un seguro.</p>
+
+    <div class="card">
+      <div class="row">
+        <div class="grow"><div class="muted">Digital</div><div style="font-size:1.4rem;font-weight:700" id="saldoDigitalDisplay">—</div></div>
+        <div class="grow"><div class="muted">Efectivo (caja física)</div><div style="font-size:1.4rem;font-weight:700" id="efectivoDisplay">—</div></div>
+      </div>
+      <p class="muted" id="efectivoUbicacionDisplay" style="margin-top:8px"></p>
+      <p class="muted" style="margin-top:4px">Ante riesgo de corte de señal conviene tener parte del fondo en efectivo, no solo en una cuenta digital.</p>
+    </div>
+
+    <div class="card" id="aportarCard">
+      <h2>Aportar ahora</h2>
+      <div id="aportarLinkWrap" hidden></div>
+      <div id="aportarAliasWrap" hidden class="copyrow">
+        <code id="aliasPagoText"></code>
+        <button class="btn-ghost btn-sm" id="copiarAliasBtn"><svg class="i"><use href="#ic-copy"></use></svg>Copiar</button>
+      </div>
+      <p class="empty" id="aportarVacio">Todavía no se cargó un alias, CVU o link de pago. Completalo abajo.</p>
+      <p class="muted" style="margin-top:8px">¿Preferís aportar en efectivo? Se lo entregás directo al custodio de esta temporada y queda anotado como ingreso en Efectivo, abajo.</p>
+    </div>
+
+    <div class="card">
+      <h2>Configuración del fondo</h2>
+      <label class="field" style="margin-top:0"><span>Tope para gasto sin consulta previa</span><input type="number" id="topeInput" inputmode="decimal"></label>
+      <label class="field"><span>Custodio de esta temporada</span><input type="text" id="custodioInput"></label>
+      <label class="field"><span>Monto y frecuencia de aporte sugerido</span><input type="text" id="aporteInput" placeholder="Ej: $5000 por mes, octubre a abril"></label>
+      <label class="field"><span>Alias / CVU / CBU para aportar</span><input type="text" id="aliasPagoInput" placeholder="Ej: cuadra.salsipuedes.ualá"></label>
+      <label class="field"><span>Link de pago (opcional, Ualá, Mercado Pago, etc.)</span><input type="text" id="linkPagoInput" placeholder="https://..."></label>
+      <label class="field"><span>Dónde está guardada la caja física</span><input type="text" id="efectivoUbicacionInput" placeholder="Ej: en casa del custodio, caja metálica"></label>
+      <p class="muted" style="margin-top:8px">La cuenta digital queda a nombre de una persona porque abrir una cuenta sin titular no es posible en un banco o billetera común. Lo que la hace "de todos" no es a nombre de quién está, es que el registro de movimientos quede público acá abajo y que el custodio rote cada temporada. Para una cuenta realmente neutral hace falta constituir una asociación civil o cooperativa formal con CUIT propio — otro paso, aparte de esta app.</p>
+      <div class="btnrow"><button class="btn-ghost btn-sm" id="guardarFondoCfgBtn">Guardar</button></div>
+    </div>
+
+    <div class="card">
+      <h2>Registrar movimiento</h2>
+      <div class="btnrow">
+        <button class="btn-ghost btn-sm" data-tipo="ingreso" id="tipoIngresoBtn">Ingreso</button>
+        <button class="btn-ghost btn-sm" data-tipo="egreso" id="tipoEgresoBtn">Egreso</button>
+      </div>
+      <div class="btnrow">
+        <button class="btn-ghost btn-sm" id="medioDigitalBtn">Digital</button>
+        <button class="btn-ghost btn-sm" id="medioEfectivoBtn">Efectivo</button>
+      </div>
+      <label class="field"><span>Monto</span><input type="number" id="montoInput" inputmode="decimal"></label>
+      <label class="field"><span>Motivo</span><input type="text" id="motivoInput" placeholder="Ej: combustible para el vehículo"></label>
+      <div class="btnrow"><button class="btn-accent" id="agregarMovBtn">Agregar</button></div>
+    </div>
+
+    <h2>Movimientos</h2>
+    <div id="movList"></div>
+  </section>
+
+</div>
+
+<div id="msg" hidden></div>
+
+<nav class="tabs"><div class="inner">
+  <button class="active" data-tab="micasa"><svg class="i"><use href="#ic-home"></use></svg>Mi casa</button>
+  <button data-tab="guia"><svg class="i"><use href="#ic-list"></use></svg>Guía</button>
+  <button data-tab="tablero"><svg class="i"><use href="#ic-grid"></use></svg>Tablero</button>
+  <button data-tab="roles"><svg class="i"><use href="#ic-users"></use></svg>Roles</button>
+  <button data-tab="fondo"><svg class="i"><use href="#ic-coin"></use></svg>Fondo</button>
+</div></nav>
+
+<script src="vendor/firebase-app-compat.js"></script>
+<script src="vendor/firebase-firestore-compat.js"></script>
+<script src="config.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  // ---------- small utils ----------
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function ls_get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function ls_set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+  function ls_del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+  function slug(s){
+    return String(s||"").trim().toLowerCase()
+      .normalize("NFD").replace(/[̀-ͯ]/g,"")
+      .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60) || "casa";
+  }
+  function timeAgo(iso){
+    if(!iso) return "";
+    var d = new Date(iso); if(isNaN(d.getTime())) return "";
+    var s = Math.round((Date.now()-d.getTime())/1000);
+    if(s<60) return "hace instantes";
+    var m=Math.round(s/60); if(m<60) return "hace "+m+" min";
+    var h=Math.round(m/60); if(h<24) return "hace "+h+" h";
+    var dd=Math.round(h/24); return "hace "+dd+" d";
+  }
+  var msgTimer=null;
+  function showMsg(t){
+    var el=$("msg"); el.textContent=t; el.hidden=false;
+    clearTimeout(msgTimer); msgTimer=setTimeout(function(){ el.hidden=true; }, 3200);
+  }
+  // Traduce los códigos de error de Firestore a mensajes para la gente.
+  function dbErrText(e){
+    var code = e && e.code;
+    if(code==="invalid-argument") return "Dato no válido. Revisá lo que escribiste.";
+    if(code==="permission-denied") return "El tablero no aceptó el cambio. Revisá que los datos estén bien y que no sean demasiado largos.";
+    if(code==="resource-exhausted") return "Se llegó al límite gratuito de uso de hoy. Mañana vuelve a funcionar normalmente.";
+    if(code==="unavailable") return "Sin conexión con el tablero. Lo que cargues se guarda en este teléfono y se envía cuando vuelva la señal.";
+    if(code==="failed-precondition") return "Hay otra pestaña del tablero abierta en este teléfono. Cerrala y recargá.";
+    return "No se pudo guardar. Probá de nuevo.";
+  }
+
+  // Guarda un documento sin esperar a que el servidor confirme, para que la app
+  // siga respondiendo aunque no haya señal. Firestore lo guarda en el teléfono al
+  // instante y lo envía solo cuando vuelve la conexión.
+  function guardar(ref, data, okMsg){
+    var p;
+    try{ p = ref.set(data); }catch(e){ showMsg(dbErrText(e)); return false; }
+    var listo=false;
+    var aviso=setTimeout(function(){
+      if(!listo) showMsg("Quedó guardado en este teléfono. Se envía solo cuando vuelva la conexión.");
+    }, navigator.onLine ? 5000 : 400);
+    p.then(function(){ listo=true; clearTimeout(aviso); if(okMsg) showMsg(okMsg); },
+           function(e){ listo=true; clearTimeout(aviso); showMsg(dbErrText(e)); });
+    return true;
+  }
+  async function copyText(t){
+    try{ await navigator.clipboard.writeText(t); showMsg("Copiado."); return; }catch(e){}
+    try{
+      var ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      document.execCommand("copy"); document.body.removeChild(ta);
+      showMsg("Copiado.");
+    }catch(e2){ showMsg("No se pudo copiar. Mantené presionado el texto para seleccionarlo."); }
+  }
+
+  // ---------- tabs ----------
+  var tabs=["micasa","guia","tablero","roles","fondo"];
+  function showTab(t){
+    tabs.forEach(function(name){ $("tab-"+name).hidden = (name!==t); });
+    document.querySelectorAll("nav.tabs button").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-tab")===t);
+    });
+    ls_set("cuadra_tab", t);
+  }
+  document.querySelectorAll("nav.tabs button").forEach(function(b){
+    b.addEventListener("click", function(){ showTab(b.getAttribute("data-tab")); });
+  });
+  $("irAFondoBtn").addEventListener("click", function(){ showTab("fondo"); });
+  $("filtroTramoSelect").addEventListener("change", function(){
+    ls_set("cuadra_mi_tramo", $("filtroTramoSelect").value);
+    renderCasasList();
+  });
+  showTab(ls_get("cuadra_tab") || "micasa");
+
+  // ---------- state ----------
+  var db=null, canWrite=true;
+  var casas={};
+  var alerta={ nivel:"ninguna" };
+  var roles={};
+  var fondo={ saldoDigital:0, efectivoFisico:0, efectivoUbicacion:"", tope:0, custodio:"", aporte:"", aliasPago:"", linkPago:"", movimientos:[] };
+  var movTipoSel="ingreso";
+  var movMedioSel="digital";
+  var alertaEditOpen=false;
+  var telefonos={ medicos:"107", defensaCivil:"103", bomberos:"100", ambiental:"105", etac:"3541 65-3255", otros:"" };
+  var telEditMode=false;
+  var configGeneral={ linkTablero:"" };
+  var linkTableroEditMode=false;
+
+  var ROLE_LABELS={
+    alerta:{label:"Responsable de chequear la alerta", icon:"ic-bell"},
+    vehiculo:{label:"Vehículo alto / camioneta para evacuación", icon:"ic-car"},
+    generador:{label:"Generador disponible", icon:"ic-plug"},
+    botiquin:{label:"Botiquín / primeros auxilios", icon:"ic-cross"},
+    enlace:{label:"Enlace con Defensa Civil / Municipalidad", icon:"ic-link"}
+  };
+  var ALERTA_LEVELS=["ninguna","amarilla","naranja","roja"];
+  var ALERTA_LABEL={ninguna:"Sin alerta",amarilla:"Alerta amarilla (atentos)",naranja:"Alerta naranja — protocolo activo",roja:"Alerta roja — protocolo activo"};
+
+  // Estado de cada casa: mismos colores que la alerta oficial, más el verde.
+  var ESTADO_LABEL={
+    verde:"Están bien",
+    amarillo:"Problema, puede esperar",
+    naranja:"Van a necesitar ayuda en unas horas",
+    rojo:"Necesitan ayuda ya"
+  };
+
+  // Recomendaciones por nivel de alerta, redactadas a partir de la página de
+  // El Niño de la Agencia Federal de Emergencias (argentina.gob.ar).
+  var ALERTA_RECOS={
+    amarilla:{
+      titulo:"Lluvias que pueden causar daños",
+      items:[
+        "Salí de tu casa solo si hace falta.",
+        "No saques la basura, porque el agua la arrastra y tapa los desagües.",
+        "Limpiá desagües, canaletas y sumideros de tu casa.",
+        "Alejate de las zonas que se inundan.",
+        "Si el agua está por entrar a la casa, cortá la luz desde el tablero eléctrico."
+      ]
+    },
+    naranja:{
+      titulo:"Lluvias peligrosas",
+      items:[
+        "Salí solo si es imprescindible.",
+        "No te acerques a cables, postes ni carteles con electricidad.",
+        "Cargá el celular.",
+        "Prepará el kit de emergencia: agua potable, comida, botiquín, radio a pilas y linterna."
+      ]
+    },
+    roja:{
+      titulo:"Lluvias extremas",
+      items:[
+        "Alejate de ríos, arroyos y zonas que se inundan.",
+        "No entres a calles anegadas, ni a pie ni en auto.",
+        "Tené el kit de emergencia listo y a mano.",
+        "Pasales estas recomendaciones a tu familia y a la gente que tengas cerca."
+      ]
+    }
+  };
+
+  function recosHtml(nivel, conTag){
+    var r=ALERTA_RECOS[nivel]; if(!r) return "";
+    return '<div class="recos-title">'+(conTag?'<span class="nivel-tag '+nivel+'">'+esc(nivel.charAt(0).toUpperCase()+nivel.slice(1))+'</span>':'Qué hacer: ')+esc(r.titulo)+'</div>'+
+      '<ul class="recos">'+r.items.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join("")+'</ul>';
+  }
+  // Link al código fuente (lo pide la licencia AGPL). En GitHub Pages lo arma
+  // solo a partir de la dirección: usuario.github.io/repo -> github.com/usuario/repo
+  (function(){
+    var m = location.hostname.match(/^([a-z0-9-]+)\.github\.io$/i);
+    if(!m) return;
+    var repo = location.pathname.split("/").filter(Boolean)[0];
+    if(!repo || /\.html?$/i.test(repo)) repo = m[1]+".github.io";
+    $("fuenteLink").href = "https://github.com/"+m[1]+"/"+repo;
+    $("fuenteLinkWrap").hidden = false;
+  })();
+
+  // ========== ESTAR PREPARADOS ==========
+  // Lista de preparación. Los tildes se guardan solo en este teléfono
+  // (localStorage), nunca en la base compartida.
+  var PREP=[
+    { id:"quedarse", titulo:"Para quedarse unos días sin salir", sub:"Ruta cortada, sin luz y sin agua de la red. En las Sierras Chicas es lo más probable.", items:[
+      ["agua","Agua: unos 4 litros por persona por día, para al menos 3 días. Si no es envasada, renovala cada 6 meses."],
+      ["comida","Comida que no necesite heladera ni cocción: latas, galletitas, barras de cereal. Y un abrelatas manual."],
+      ["luz","Linterna y radio a pilas, con pilas de repuesto. Velas y fósforos en una bolsa cerrada."],
+      ["bateria","Celular cargado y una batería externa también cargada."],
+      ["efectivo","Efectivo en billetes chicos: sin luz no andan el posnet ni el cajero."],
+      ["botiquin","Botiquín revisado y sin vencidos: gasas, vendas, antiséptico, guantes, alcohol en gel, termómetro."],
+      ["medicacion","La medicación de todos los días para varios días, más la receta."],
+      ["garrafa","Garrafa cargada y anafe para cocinar, usados siempre con una ventana abierta."],
+      ["electromedico","Si alguien depende de un equipo médico eléctrico: saber qué hacer cuando se corta la luz (batería, generador o a dónde llevarlo)."],
+      ["mascotas","Comida y agua para las mascotas."]
+    ]},
+    { id:"irse", titulo:"Mochila por si hay que irse", sub:"Una por persona, impermeable o con bolsas adentro, a mano cerca de la puerta.", items:[
+      ["ropa","Muda de ropa para 3 días, abrigo, impermeable y botas de goma."],
+      ["documentos","Documentos de toda la familia y de la casa (DNI, credencial de la obra social, escritura) en una bolsa hermética."],
+      ["aguacomida","Agua y comida para un día."],
+      ["cargador","Cargador del celular y batería externa."],
+      ["remedios","Medicación y recetas. Si alguien usa lentes o audífonos, sus repuestos o pilas."],
+      ["libreta","Una libreta con los teléfonos útiles escritos a mano, por si el celular se queda sin batería."],
+      ["higiene","Silbato, alcohol en gel y papel higiénico."],
+      ["llaves","Llaves de la casa y del auto."],
+      ["chicos","Lo que necesiten bebés o chicos: pañales, leche, algo para entretenerlos."]
+    ]},
+    { id:"casa", titulo:"En la casa, una vez por temporada", sub:"Cosas que se hacen con tiempo y en seco.", items:[
+      ["llaves-corte","Saber dónde están la llave de la luz y la del gas, y cómo se cortan. Que lo sepan todos en la casa."],
+      ["canaletas","Limpiar canaletas, desagües y la vereda."],
+      ["altura","Subir del piso lo que no se puede mojar: papeles, aparatos, fotos."],
+      ["fuga","Revisar la manguera y el regulador de la garrafa: pasar agua con jabón por las conexiones. Si hace burbujas, hay pérdida."],
+      ["generador","Si hay generador: se usa siempre afuera, nunca adentro de la casa ni en un garaje cerrado."],
+      ["plan","Charlar el plan con toda la familia, incluidos los chicos y los mayores: quién agarra qué y a dónde se va si hay que salir."]
+    ]}
+  ];
+  var prepEstado={};
+  try{ prepEstado = JSON.parse(ls_get("cuadra_preparacion")||"{}") || {}; }catch(e){ prepEstado={}; }
+
+  function prepKey(g,i){ return g+"."+i; }
+  function prepContar(){
+    var total=0, listos=0;
+    PREP.forEach(function(g){
+      var n=0;
+      g.items.forEach(function(it){ total++; if(prepEstado[prepKey(g.id,it[0])]){ listos++; n++; } });
+      var el=document.getElementById("prepCnt-"+g.id);
+      if(el){ el.textContent=n+" de "+g.items.length; el.classList.toggle("done", n===g.items.length); }
+    });
+    $("prepTotal").textContent = listos+" de "+total+" listos";
+  }
+  function prepRender(){
+    $("prepGrupos").innerHTML = PREP.map(function(g){
+      return '<details><summary>'+esc(g.titulo)+'<span class="cnt" id="prepCnt-'+g.id+'" style="margin-left:auto"></span><svg class="i car" style="margin-left:6px"><use href="#ic-chevron"></use></svg></summary>'+
+        '<div class="gsub">'+esc(g.sub)+'</div>'+
+        g.items.map(function(it){
+          var k=prepKey(g.id,it[0]), ok=!!prepEstado[k];
+          return '<label class="checkrow'+(ok?' ok':'')+'"><div class="q grow">'+esc(it[1])+'</div><input type="checkbox" data-prep="'+esc(k)+'"'+(ok?' checked':'')+'></label>';
+        }).join("")+
+      '</details>';
+    }).join("");
+    document.querySelectorAll("[data-prep]").forEach(function(chk){
+      chk.addEventListener("change", function(){
+        var k=chk.getAttribute("data-prep");
+        if(chk.checked) prepEstado[k]=true; else delete prepEstado[k];
+        chk.closest(".checkrow").classList.toggle("ok", chk.checked);
+        ls_set("cuadra_preparacion", JSON.stringify(prepEstado));
+        prepContar();
+      });
+    });
+    prepContar();
+  }
+  prepRender();
+  $("prepResetBtn").addEventListener("click", function(){
+    if(!Object.keys(prepEstado).length) return showMsg("No hay nada tildado todavía.");
+    if(!window.confirm("¿Destildar toda la lista para revisarla de nuevo esta temporada?")) return;
+    prepEstado={}; ls_del("cuadra_preparacion"); prepRender(); showMsg("Lista destildada.");
+  });
+
+  $("elNinoRecos").innerHTML =["amarilla","naranja","roja"].map(function(n){ return recosHtml(n,true); }).join("");
+
+  // ========== INIT ==========
+  function fatal(titulo, texto){
+    $("fatalTitulo").textContent=titulo; $("fatalTexto").textContent=texto; $("fatal").hidden=false;
+  }
+
+  (function init(){
+    var cfg = window.FIREBASE_CONFIG;
+    if(!cfg || !cfg.apiKey || /PEGAR/.test(cfg.apiKey)){
+      fatal("Falta configurar la conexión.", "Todavía no se pegaron los datos del proyecto de Firebase en el archivo config.js.");
+      return;
+    }
+    if(typeof firebase==="undefined"){
+      fatal("No se pudo cargar el tablero.", "Revisá que tengas internet y recargá la página.");
+      return;
+    }
+    try{
+      firebase.initializeApp(cfg);
+      db = firebase.firestore();
+      // Guarda una copia de los datos en el teléfono para poder ver el tablero
+      // y cargar cambios sin señal. Si el navegador no lo permite, sigue sin copia.
+      db.enablePersistence({ synchronizeTabs:true }).catch(function(){});
+    }catch(e){ db=null; }
+
+    if(!db){ fatal("No se pudo conectar.", "Revisá que tengas internet y recargá la página."); return; }
+
+    subscribeAll();
+    bindEvents();
+  })();
+
+  function subscribeAll(){
+    db.doc("estado/alerta").onSnapshot(function(snap){
+      alerta = snap.exists ? snap.data() : {nivel:"ninguna"};
+      renderAlerta(); renderMiCasa();
+    }, function(e){ showMsg(dbErrText(e)); });
+
+    db.collection("casas").orderBy("nombre","asc").onSnapshot(function(qs){
+      var next={};
+      qs.docs.forEach(function(d){ next[d.id]=d.data(); });
+      casas=next;
+      renderCasasList();
+      renderCasasCargadasList();
+      renderMiCasa();
+    }, function(e){ showMsg(dbErrText(e)); });
+
+    db.collection("roles").onSnapshot(function(qs){
+      var next={};
+      qs.docs.forEach(function(d){ next[d.id]=d.data(); });
+      roles=next;
+      renderRoles();
+    }, function(e){ showMsg(dbErrText(e)); });
+
+    db.doc("fondo/resumen").onSnapshot(function(snap){
+      fondo = snap.exists ? snap.data() : {saldoDigital:0,efectivoFisico:0,efectivoUbicacion:"",tope:0,custodio:"",aporte:"",aliasPago:"",linkPago:"",movimientos:[]};
+      renderFondo();
+    }, function(e){ showMsg(dbErrText(e)); });
+
+    db.doc("telefonos/utiles").onSnapshot(function(snap){
+      telefonos = snap.exists ? snap.data() : { medicos:"107", defensaCivil:"103", bomberos:"100", ambiental:"105", etac:"3541 65-3255", otros:"" };
+      renderTelefonos();
+    }, function(e){ showMsg(dbErrText(e)); });
+
+    db.doc("config/general").onSnapshot(function(snap){
+      configGeneral = snap.exists ? snap.data() : { linkTablero:"" };
+      renderInvitar();
+    }, function(e){ showMsg(dbErrText(e)); });
+  }
+
+  function protocoloActivo(){ return alerta.nivel==="naranja" || alerta.nivel==="roja"; }
+
+  // ========== TABLERO ==========
+  function renderAlerta(){
+    var nivel = alerta.nivel || "ninguna";
+    var el=$("alertaBanner");
+    el.className="banner "+nivel;
+    el.querySelector(".lvl").textContent = ALERTA_LABEL[nivel] || "Sin alerta";
+    var meta = "";
+    if(alerta.actualizadoPor) meta += "Actualizado por "+alerta.actualizadoPor;
+    if(alerta.actualizadoEn) meta += (meta?" · ":"")+timeAgo(alerta.actualizadoEn);
+    el.querySelector(".meta").textContent = meta || "Todavía no se registró ningún cambio";
+    $("alertaRecos").innerHTML = recosHtml(nivel, false);
+
+    var btnrow=$("alertaBtns"); btnrow.innerHTML="";
+    ALERTA_LEVELS.forEach(function(lv){
+      var b=document.createElement("button");
+      b.className="btn-sm "+(lv===nivel?"btn-accent":"btn-ghost");
+      b.textContent=ALERTA_LABEL[lv];
+      b.disabled=!canWrite;
+      b.addEventListener("click", function(){ setAlerta(lv); });
+      btnrow.appendChild(b);
+    });
+  }
+
+  async function setAlerta(nivel){
+    if(!canWrite) return showMsg("No tenés permiso para editar.");
+    var myId=ls_get("cuadra_mi_casa");
+    var quien = ls_get("cuadra_mi_nombre") || (myId && casas[myId] && casas[myId].nombre) || "alguien del grupo";
+    if(guardar(db.doc("estado/alerta"), { nivel:nivel, actualizadoPor:quien, actualizadoEn:new Date().toISOString() })){
+      alertaEditOpen=false; $("alertaBtns").hidden=true;
+    }
+  }
+
+  function renderCasasList(){
+    var ids=Object.keys(casas);
+    var list=$("casasList");
+    if(!ids.length){ list.innerHTML='<div class="empty">Todavía no hay ninguna casa cargada. Entrá en "Mi casa" para sumar la tuya.</div>'; return; }
+    var filtroTramo = ls_get("cuadra_mi_tramo") || "";
+    if(filtroTramo && roles[filtroTramo]){
+      var allow = roles[filtroTramo].casasIds || [];
+      ids = ids.filter(function(id){ return allow.indexOf(id)>=0; });
+    }
+    if(!ids.length){ list.innerHTML='<div class="empty">No hay casas para mostrar con este filtro.</div>'; return; }
+    list.innerHTML="";
+    var myId=ls_get("cuadra_mi_casa");
+    ids.forEach(function(id){
+      var c=casas[id];
+      var color=c.color||"grey";
+      var card=document.createElement("div");
+      var mine = (id===myId);
+      card.className="card"+(mine?" mine":"");
+      var p=c.perfil||{};
+      var badges="";
+      if(p.movilidad) badges+='<span class="pill"><svg class="i"><use href="#ic-cane"></use></svg>movilidad reducida</span>';
+      if(p.menor) badges+='<span class="pill"><svg class="i"><use href="#ic-child"></use></svg>menores en la casa</span>';
+      if(p.electromedico) badges+='<span class="pill"><svg class="i"><use href="#ic-bolt"></use></svg>equipo médico</span>';
+      if(p.medicacion) badges+='<span class="pill"><svg class="i"><use href="#ic-pill"></use></svg>medicación</span>';
+      card.innerHTML =
+        '<div class="row">'+
+          '<div class="dot '+esc(color)+'"></div>'+
+          '<div class="grow"><div class="name">'+esc(c.nombre||id)+(mine?' <span class="muted">(tu casa)</span>':'')+'</div>'+
+            (ESTADO_LABEL[color]? '<div class="estado-txt '+esc(color)+'">'+esc(ESTADO_LABEL[color])+'</div>' : '')+
+            (c.nota? '<div class="muted">'+esc(c.nota)+'</div>' : '')+
+          '</div>'+
+          '<div class="timeago">'+esc(timeAgo(c.actualizadoEn))+'</div>'+
+        '</div>'+
+        (badges ? '<div class="row" style="margin-top:8px;flex-wrap:wrap">'+badges+'</div>' : '')+
+        (mine ? '<div class="btnrow"><button class="btn-ghost btn-sm" data-goto-micasa="1"><svg class="i"><use href="#ic-edit"></use></svg>Corregir mi perfil</button></div>' : '');
+      list.appendChild(card);
+    });
+    document.querySelectorAll("[data-goto-micasa]").forEach(function(b){
+      b.addEventListener("click", function(){ showTab("micasa"); });
+    });
+  }
+
+  // ========== MI CASA ==========
+  var perfilEditMode=false;
+
+  function renderMiCasa(){
+    var myId=ls_get("cuadra_mi_casa");
+    if(!myId || !casas[myId]){
+      $("onboarding").hidden=false;
+      $("miCasaContent").hidden=true;
+      renderOnboardingList();
+      return;
+    }
+    $("onboarding").hidden=true;
+    $("miCasaContent").hidden=false;
+    var c=casas[myId];
+    $("miCasaNombre").textContent=c.nombre||myId;
+
+    var activo=protocoloActivo();
+    $("estadoActivoCard").hidden=!activo;
+    $("estadoInactivoCard").hidden=activo;
+
+    document.querySelectorAll("#colorChoices .choice").forEach(function(el){
+      el.classList.toggle("sel-"+el.getAttribute("data-color"), c.color===el.getAttribute("data-color"));
+    });
+    $("notaInput").value = c.nota || "";
+    $("estadoActualizado").textContent = c.actualizadoEn ? ("Último reporte: "+timeAgo(c.actualizadoEn)) : "Todavía no reportaste ningún estado.";
+
+    var p=c.perfil||{};
+    renderPerfilView(p);
+    $("perfilView").hidden = perfilEditMode;
+    $("perfilEditFields").hidden = !perfilEditMode;
+    $("perfilEditBtn").hidden = perfilEditMode;
+
+    $("p_whatsapp").checked=!!p.whatsapp;
+    $("p_fijo").checked=!!p.fijo;
+    $("p_fijoPosible").checked=!!p.fijoPosible;
+    $("p_fijoCosto").value=p.fijoCosto||"";
+    $("p_electromedico").checked=!!p.electromedico;
+    $("p_medicacion").checked=!!p.medicacion;
+    $("p_movilidad").checked=!!p.movilidad;
+    $("p_menor").checked=!!p.menor;
+    $("p_replicar").checked=!!p.replicar;
+    updateFijoExtraVisibility();
+    renderInvitar();
+  }
+
+  function renderInvitar(){
+    var myId=ls_get("cuadra_mi_casa");
+    var p = myId && casas[myId] && casas[myId].perfil;
+    var replicar = !!(p && p.replicar);
+    $("invitarCard").hidden = !replicar;
+    if(!replicar) return;
+    $("linkTableroInput").value = configGeneral.linkTablero||"";
+    $("linkTableroEdit").hidden = !linkTableroEditMode;
+    var linkAuto = (location.protocol==="https:") ? (location.origin+location.pathname) : "";
+    var link = configGeneral.linkTablero || linkAuto || '(todavía falta cargar el link, tocá "Link" arriba para pegarlo)';
+    $("invitarTexto").value = "Te quiero invitar a algo que armamos en la cuadra para los temporales. Se llama Avisarnos: es una página web donde cada casa avisa cómo está y vemos quién tiene recursos para prestar. No hay que bajar nada de ninguna tienda: entrás desde el celu a este link y listo — "+link+". Cualquier duda te explico.";
+  }
+
+  async function guardarLinkTablero(){
+    if(!canWrite) return showMsg("No tenés permiso para editar.");
+    var link = $("linkTableroInput").value.trim();
+    if(guardar(db.doc("config/general"), Object.assign({}, configGeneral, { linkTablero: link }), "Guardado.")){ linkTableroEditMode=false; renderInvitar(); }
+  }
+
+  function siNo(v){ return v ? "Sí" : "No"; }
+
+  function renderPerfilView(p){
+    p = p || {};
+    var rows = [
+      ["ic-chat","WhatsApp con datos", siNo(p.whatsapp)],
+      ["ic-phone","Teléfono fijo", siNo(p.fijo) + (!p.fijo && p.fijoPosible ? " · Podrían conseguir uno" : "") + (!p.fijo && p.fijoCosto ? " (" + esc(p.fijoCosto) + ")" : "")],
+      ["ic-bolt","Equipo médico que depende de electricidad", siNo(p.electromedico)],
+      ["ic-pill","Medicación con cadena de frío / continuidad", siNo(p.medicacion)],
+      ["ic-cane","Persona mayor o con movilidad reducida", siNo(p.movilidad)],
+      ["ic-child","Menores de edad en la casa", siNo(p.menor)],
+      ["ic-share","Quiere ofrecer replicar esto en otro lado", siNo(p.replicar)]
+    ];
+    $("perfilView").innerHTML = rows.map(function(r){
+      return '<div class="row" style="padding:6px 0"><svg class="i"><use href="#'+r[0]+'"></use></svg><div class="grow muted" style="font-size:.88rem">'+r[1]+'</div><div style="font-weight:600;font-size:.88rem">'+r[2]+'</div></div>';
+    }).join("");
+  }
+
+  function updateFijoExtraVisibility(){
+    $("fijoExtra").hidden = $("p_fijo").checked;
+  }
+
+  function renderOnboardingList(){
+    var ids=Object.keys(casas);
+    $("onboardingVacio").hidden = ids.length>0;
+    var list=$("onboardingList");
+    list.innerHTML = ids.map(function(id){
+      var c=casas[id];
+      return '<div class="row"><div class="grow name">'+esc(c.nombre||id)+'</div>'+
+        '<button class="btn-ghost btn-sm" data-pick-house="'+esc(id)+'">Esta es la mía</button></div>';
+    }).join("");
+    document.querySelectorAll("[data-pick-house]").forEach(function(b){
+      b.addEventListener("click", function(){
+        var id=b.getAttribute("data-pick-house");
+        ls_set("cuadra_mi_casa", id);
+        ls_set("cuadra_mi_nombre", (casas[id]&&casas[id].nombre)||id);
+        renderMiCasa();
+      });
+    });
+  }
+
+  var selectedColor=null;
+
+  async function createHouse(){
+    var name=$("houseNameInput").value.trim();
+    if(!name) return showMsg("Escribí un nombre para tu casa.");
+    var id=slug(name);
+    ls_set("cuadra_mi_casa", id);
+    ls_set("cuadra_mi_nombre", name);
+    if(!canWrite){ renderMiCasa(); return showMsg("Entraste en modo solo lectura: no vas a poder guardar cambios."); }
+    if(!casas[id]){
+      guardar(db.collection("casas").doc(id), {
+        nombre:name, color:"grey", nota:"", actualizadoEn:new Date().toISOString(),
+        perfil:{whatsapp:false,fijo:false,fijoPosible:false,fijoCosto:"",electromedico:false,medicacion:false,movilidad:false,menor:false,replicar:false}
+      });
+    } else { renderMiCasa(); }
+  }
+
+  async function guardarEstado(){
+    if(!canWrite) return showMsg("No tenés permiso para editar.");
+    var myId=ls_get("cuadra_mi_casa");
+    if(!myId) return;
+    var color = selectedColor || (casas[myId] && casas[myId].color) || "grey";
+    var nota=$("notaInput").value.trim();
+    var base = casas[myId] || {nombre: ls_get("cuadra_mi_nombre")||myId, perfil:{}};
+    guardar(db.collection("casas").doc(myId), Object.assign({}, base, {
+      color:color, nota:nota, actualizadoEn:new Date().toISOString()
+    }), "Estado guardado.");
+  }
+
+  async function guardarPerfil(){
+    if(!canWrite) return showMsg("No tenés permiso para editar.");
+    var myId=ls_get("cuadra_mi_casa");
+    if(!myId) return;
+    var base = casas[myId] || {nombre: ls_get("cuadra_mi_nombre")||myId, color:"grey", nota:""};
+    var perfil={
+      whatsapp:$("p_whatsapp").checked, fijo:$("p_fijo").checked,
+      fijoPosible:$("p_fijoPosible").checked, fijoCosto:$("p_fijoCosto").value.trim(),
+      electromedico:$("p_electromedico").checked, medicacion:$("p_medicacion").checked,
+      movilidad:$("p_movilidad").checked, menor:$("p_menor").checked, replicar:$("p_replicar").checked
+    };
+    if(guardar(db.collection("casas").doc(myId), Object.assign({}, base, { perfil:perfil }), "Perfil guardado.")){
+      perfilEditMode=false; renderMiCasa();
+    }
+  }
+
+  // ========== CASAS CARGADAS (admin) ==========
+  function renderCasasCargadasList(){
+    var ids=Object.keys(casas);
+    var el=$("casasCargadasList");
+    if(!ids.length){ el.innerHTML='<div class="empty">Todavía no hay ninguna.</div>'; return; }
+    el.innerHTML = ids.map(function(id){ return '<span class="pill">'+esc(casas[id].nombre||id)+'</span>'; }).join(" ");
+  }
+
+  async function adminCrearCasa(){
+    if(!canWrite) return showMsg("No tenés permiso para editar.");
+    var name = $("nuevaCasaInput").value.trim();
+    if(!name) return showMsg("Escribí un nombre.");
+    var id = slug(name);
+    if(casas[id]){ showMsg("Ya existe una casa con ese nombre."); return; }
+    if(guardar(db.collection("casas").doc(id), {
+      nombre:name, color:"grey", nota:"", actualizadoEn:new Date().toISOString(),
+      perfil:{whatsapp:false,fijo:false,fijoPosible:false,fijoCosto:"",electromedico:false,medicacion:false,movilidad:false,menor:false,replicar:false}
+    }, "Casa agregada.")){
+      $("nuevaCasaInput").value="";
+      $("agregarCasaForm").hidden=true;
+    }
+  }
+
+  // ========== ROLES ==========
+  function roleRow(id, label, icon, data, isTramo){
+    data = data || {};
+    var casasTxt = data.casas ? (' · casas: '+esc(data.casas)) : "";
+    var sup = data.suplente ? (' · suplente: '+esc(data.suplente)) : "";
+    return '<div class="row">'+
+      '<svg class="i"><use href="#'+icon+'"></use></svg>'+
+      '<div class="grow">'+
+        '<div class="name">'+esc(label)+'</div>'+
+        '<div class="muted">'+(data.titular? esc(data.titular) : 'sin asignar')+(data.contacto? ' · '+esc(data.contacto) : '')+sup+casasTxt+'</div>'+
+      '</div>'+
+      '<button class="btn-ghost btn-sm" data-edit-role="'+esc(id)+'" data-tramo="'+(isTramo?"1":"0")+'"><svg class="i"><use href="#ic-edit"></use></svg></button>'+
+    '</div>';
+  }
+
+  function renderRoles(){
+    $("role-alerta").innerHTML = roleRow("alerta", ROLE_LABELS.alerta.label, ROLE_LABELS.alerta.icon, roles.alerta, false);
+    $("role-vehiculo").innerHTML = roleRow("vehiculo", ROLE_LABELS.vehiculo.label, ROLE_LABELS.vehiculo.icon, roles.vehiculo, false);
+    $("role-generador").innerHTML = roleRow("generador", ROLE_LABELS.generador.label, ROLE_LABELS.generador.icon, roles.generador, false);
+    $("role-botiquin").innerHTML = roleRow("botiquin", ROLE_LABELS.botiquin.label, ROLE_LABELS.botiquin.icon, roles.botiquin, false);
+    $("role-enlace").innerHTML = roleRow("enlace", ROLE_LABELS.enlace.label, ROLE_LABELS.enlace.icon, roles.enlace, false);
+
+    var tramoIds = Object.keys(roles).filter(function(k){ return /^tramo\d+$/.test(k); }).sort();
+    var list=$("tramosList");
+    if(!tramoIds.length){ list.innerHTML='<div class="empty">Todavía no hay tramos armados.</div>'; }
+    else{
+      list.innerHTML = tramoIds.map(function(id,i){
+        var d=roles[id]||{};
+        var label=d.nombre || ("Tramo "+(i+1));
+        return roleRow(id, label, "ic-users", d, true);
+      }).join("");
+    }
+    bindRoleEdits();
+    renderFiltroTramoOptions();
+  }
+
+  function renderFiltroTramoOptions(){
+    var sel=$("filtroTramoSelect");
+    var cur = ls_get("cuadra_mi_tramo") || "";
+    var tramoIds = Object.keys(roles).filter(function(k){ return /^tramo\d+$/.test(k); }).sort();
+    var opts = '<option value="">Toda la cuadra</option>' + tramoIds.map(function(id,i){
+      var d=roles[id]||{};
+      var label=d.nombre || ("Tramo "+(i+1));
+      return '<option value="'+esc(id)+'">Mi tramo: '+esc(label)+'</option>';
+    }).join("");
+    if(sel.innerHTML!==opts) sel.innerHTML=opts;
+    sel.value = tramoIds.indexOf(cur)>=0 ? cur : "";
+    renderCasasList();
+  }
+
+  function bindRoleEdits(){
+    document.querySelectorAll("[data-edit-role]").forEach(function(btn){
+      btn.onclick = function(){ editRole(btn.getAttribute("data-edit-role"), btn.getAttribute("data-tramo")==="1"); };
+    });
+  }
+
+  function editRole(id, isTramo){
+    if(!canWrite) return showMsg("No tenés permiso para editar.");
+    openRoleEditor(id, roles[id] || {}, isTramo);
+  }
+
+  function openRoleEditor(id, cur, isTramo){
+    var container = document.getElementById(
+      id==="alerta"?"role-alerta": id==="vehiculo"?"role-vehiculo": id==="botiquin"?"role-botiquin":
+      id==="generador"?"role-generador": id==="enlace"?"role-enlace": null
+    );
+    var host = container || $("tramosList");
+    var form = document.createElement("div");
+    form.className="card";
+    form.style.marginTop="8px";
+    var casasIdsCur = cur.casasIds || [];
+    var casasChecklist = Object.keys(casas).map(function(cid){
+      var checked = casasIdsCur.indexOf(cid)>=0;
+      return '<div class="checkrow"><div class="q grow">'+esc(casas[cid].nombre||cid)+'</div><input type="checkbox" class="edit_casa_chk" data-casa-id="'+esc(cid)+'" '+(checked?'checked':'')+'></div>';
+    }).join("") || '<p class="empty">Todavía no hay ninguna casa cargada para elegir.</p>';
+
+    form.innerHTML =
+      (isTramo ? '<label class="field" style="margin-top:0"><span>Nombre del tramo</span><input type="text" id="edit_nombre" value="'+esc(cur.nombre||"")+'" placeholder="Ej: Tramo Norte"></label>' : '') +
+      '<label class="field" style="margin-top:'+(isTramo?'12px':'0')+'"><span>Titular</span><input type="text" id="edit_titular" value="'+esc(cur.titular||"")+'"></label>'+
+      (isTramo ? '<label class="field"><span>Suplente</span><input type="text" id="edit_suplente" value="'+esc(cur.suplente||"")+'"></label>' : '')+
+      '<label class="field"><span>Contacto</span><input type="text" id="edit_contacto" value="'+esc(cur.contacto||"")+'"></label>'+
+      (isTramo ? '<div style="margin-top:14px"><div class="muted" style="font-size:.85rem;margin-bottom:4px">Casas a cargo — tildá las que correspondan</div>'+casasChecklist+'</div>' : '')+
+      '<div class="btnrow"><button class="btn-accent btn-sm" id="edit_save">Guardar</button><button class="btn-ghost btn-sm" id="edit_cancel">Cancelar</button></div>';
+    host.innerHTML=""; host.appendChild(form);
+
+    form.querySelector("#edit_cancel").onclick=function(){ renderRoles(); };
+    form.querySelector("#edit_save").onclick=async function(){
+      var data={ titular: form.querySelector("#edit_titular").value.trim(), contacto: form.querySelector("#edit_contacto").value.trim() };
+      if(isTramo){
+        data.nombre = form.querySelector("#edit_nombre").value.trim();
+        data.suplente = form.querySelector("#edit_suplente").value.trim();
+        var ids=[];
+        form.querySelectorAll(".edit_casa_chk:checked").forEach(function(chk){ ids.push(chk.getAttribute("data-casa-id")); });
+        data.casasIds = ids;
+        data.casas = ids.map(function(cid){ return (casas[cid]&&casas[cid].nombre)||cid; }).join(", ");
+      }
+      if(guardar(db.collection("roles").doc(id), data, "Guardado.")) renderRoles();
+    };
+  }
+
+  async function agregarTramo(){
+    if(!canWrite) return showMsg("No tenés permiso para editar.");
+    var tramoIds = Object.keys(roles).filter(function(k){ return /^tramo\d+$/.test(k); });
+    var n = tramoIds.length + 1;
+    guardar(db.collection("roles").doc("tramo"+n), { nombre:"", titular:"", suplente:"", contacto:"", casas:"", casasIds:[] });
+  }
+
+  // ========== TELEFONOS ==========
+  function renderTelefonos(){
+    var rows=[
+      ["Emergencias médicas", telefonos.medicos],
+      ["Defensa Civil", telefonos.defensaCivil],
+      ["Bomberos", telefonos.bomberos],
+      ["Emergencia ambiental", telefonos.ambiental],
+      ["ETAC (Acción ante Catástrofes, Sierras Chicas)", telefonos.etac || "sin cargar"]
+    ];
+    var html = rows.map(function(r){
+      return '<div class="row" style="padding:5px 0"><div class="grow muted" style="font-size:.88rem">'+esc(r[0])+'</div><div style="font-weight:700">'+esc(r[1]||"—")+'</div></div>';
+    }).join("");
+    if(telefonos.otros){
+      html += '<div class="muted" style="margin-top:8px;font-size:.85rem;white-space:pre-line">'+esc(telefonos.otros)+'</div>';
+    }
+    $("telView").innerHTML = html;
+    $("telView").hidden = telEditMode;
+    $("telEditFields").hidden = !telEditMode;
+    $("telEditBtn").hidden = telEditMode;
+    $("tel_medicos").value = telefonos.medicos||"";
+    $("tel_defensaCivil").value = telefonos.defensaCivil||"";
+    $("tel_bomberos").value = telefonos.bomberos||"";
+    $("tel_ambiental").value = telefonos.ambiental||"";
+    $("tel_etac").value = telefonos.etac||"";
+    $("tel_otros").value = telefonos.otros||"";
+  }
+
+  async function guardarTelefonos(){
+    if(!canWrite) return showMsg("No tenés permiso para editar.");
+    var next = {
+      medicos: $("tel_medicos").value.trim(),
+      defensaCivil: $("tel_defensaCivil").value.trim(),
+      bomberos: $("tel_bomberos").value.trim(),
+      ambiental: $("tel_ambiental").value.trim(),
+      etac: $("tel_etac").value.trim(),
+      otros: $("tel_otros").value.trim()
+    };
+    if(guardar(db.doc("telefonos/utiles"), next, "Guardado.")){ telEditMode=false; renderTelefonos(); }
+  }
+
+  // ========== FONDO ==========
+  function renderFondo(){
+    var dig = Number(fondo.saldoDigital||0), ef = Number(fondo.efectivoFisico||0);
+    $("saldoDigitalDisplay").textContent = "$"+dig.toLocaleString("es-AR");
+    $("efectivoDisplay").textContent = "$"+ef.toLocaleString("es-AR");
+    $("efectivoUbicacionDisplay").textContent = fondo.efectivoUbicacion ? ("Ubicación: "+fondo.efectivoUbicacion) : "";
+    $("fondoMiniSaldo").textContent = "$"+(dig+ef).toLocaleString("es-AR")+" (total)";
+    $("topeInput").value = fondo.tope || "";
+    $("custodioInput").value = fondo.custodio || "";
+    $("aporteInput").value = fondo.aporte || "";
+    $("aliasPagoInput").value = fondo.aliasPago || "";
+    $("linkPagoInput").value = fondo.linkPago || "";
+    $("efectivoUbicacionInput").value = fondo.efectivoUbicacion || "";
+
+    var linkWrap=$("aportarLinkWrap"), aliasWrap=$("aportarAliasWrap"), vacio=$("aportarVacio");
+    var any=false;
+    if(fondo.linkPago){
+      linkWrap.hidden=false; any=true;
+      linkWrap.innerHTML='<a class="btn-accent" href="'+esc(fondo.linkPago)+'" target="_blank" rel="noopener"><svg class="i"><use href="#ic-link"></use></svg>Aportar ahora</a>';
+    } else { linkWrap.hidden=true; linkWrap.innerHTML=""; }
+    if(fondo.aliasPago){
+      aliasWrap.hidden=false; any=true;
+      $("aliasPagoText").textContent=fondo.aliasPago;
+    } else { aliasWrap.hidden=true; }
+    vacio.hidden = any;
+
+    var movs = (fondo.movimientos||[]).slice().reverse();
+    var el=$("movList");
+    if(!movs.length){ el.innerHTML='<div class="empty">Todavía no hay movimientos registrados.</div>'; return; }
+    el.innerHTML = movs.map(function(m){
+      var signo = m.tipo==="egreso" ? "-" : "+";
+      var color = m.tipo==="egreso" ? "var(--red)" : "var(--green)";
+      return '<div class="card"><div class="row">'+
+        '<div class="grow"><div class="name">'+esc(m.motivo||"")+'</div>'+
+        '<div class="muted">'+esc(m.fecha||"")+' · '+(m.medio==="efectivo"?"efectivo":"digital")+'</div></div>'+
+        '<div style="font-weight:700;color:'+color+'">'+signo+'$'+Number(m.monto||0).toLocaleString("es-AR")+'</div>'+
+        '</div></div>';
+    }).join("");
+  }
+
+  async function guardarFondoCfg(){
+    if(!canWrite) return showMsg("No tenés permiso para editar.");
+    var next = Object.assign({}, fondo, {
+      tope: Number($("topeInput").value)||0,
+      custodio: $("custodioInput").value.trim(),
+      aporte: $("aporteInput").value.trim(),
+      aliasPago: $("aliasPagoInput").value.trim(),
+      linkPago: $("linkPagoInput").value.trim(),
+      efectivoUbicacion: $("efectivoUbicacionInput").value.trim()
+    });
+    guardar(db.doc("fondo/resumen"), next, "Guardado.");
+  }
+
+  async function agregarMovimiento(){
+    if(!canWrite) return showMsg("No tenés permiso para editar.");
+    var monto = Number($("montoInput").value);
+    var motivo = $("motivoInput").value.trim();
+    if(!monto || monto<=0) return showMsg("Poné un monto mayor a cero.");
+    if(!motivo) return showMsg("Contá el motivo del movimiento.");
+    var delta = movTipoSel==="egreso" ? -monto : monto;
+    var mov = { tipo:movTipoSel, medio:movMedioSel, monto:monto, motivo:motivo, fecha:new Date().toLocaleDateString("es-AR") };
+    var movimientos = (fondo.movimientos||[]).concat([mov]).slice(-200);
+    var next = Object.assign({}, fondo, {
+      saldoDigital: movMedioSel==="digital" ? Number(fondo.saldoDigital||0)+delta : Number(fondo.saldoDigital||0),
+      efectivoFisico: movMedioSel==="efectivo" ? Number(fondo.efectivoFisico||0)+delta : Number(fondo.efectivoFisico||0),
+      movimientos: movimientos
+    });
+    if(guardar(db.doc("fondo/resumen"), next, "Movimiento agregado.")){
+      $("montoInput").value=""; $("motivoInput").value="";
+    }
+  }
+
+  // ========== bind events ==========
+  function bindEvents(){
+    $("createHouseBtn").addEventListener("click", createHouse);
+    $("cambiarCasaBtn").addEventListener("click", function(){
+      ls_del("cuadra_mi_casa"); ls_del("cuadra_mi_nombre"); $("houseNameInput").value=""; renderMiCasa();
+    });
+    document.querySelectorAll("#colorChoices .choice").forEach(function(el){
+      el.addEventListener("click", function(){
+        selectedColor = el.getAttribute("data-color");
+        document.querySelectorAll("#colorChoices .choice").forEach(function(e2){
+          e2.classList.toggle("sel-"+e2.getAttribute("data-color"), e2===el);
+        });
+      });
+    });
+    $("p_fijo").addEventListener("change", updateFijoExtraVisibility);
+    $("guardarEstadoBtn").addEventListener("click", guardarEstado);
+    $("guardarPerfilBtn").addEventListener("click", guardarPerfil);
+    $("perfilEditBtn").addEventListener("click", function(){ perfilEditMode=true; renderMiCasa(); });
+    $("cancelarPerfilBtn").addEventListener("click", function(){ perfilEditMode=false; renderMiCasa(); });
+    $("agregarTramoBtn").addEventListener("click", agregarTramo);
+    $("agregarCasaBtn").addEventListener("click", function(){ $("agregarCasaForm").hidden=!$("agregarCasaForm").hidden; });
+    $("nuevaCasaCancelarBtn").addEventListener("click", function(){ $("agregarCasaForm").hidden=true; $("nuevaCasaInput").value=""; });
+    $("nuevaCasaGuardarBtn").addEventListener("click", adminCrearCasa);
+    $("guardarFondoCfgBtn").addEventListener("click", guardarFondoCfg);
+    $("agregarMovBtn").addEventListener("click", agregarMovimiento);
+    $("copiarAliasBtn").addEventListener("click", function(){ copyText($("aliasPagoText").textContent); });
+    $("tipoIngresoBtn").addEventListener("click", function(){ movTipoSel="ingreso"; markTipo(); });
+    $("tipoEgresoBtn").addEventListener("click", function(){ movTipoSel="egreso"; markTipo(); });
+    $("toggleAlertaEdit").addEventListener("click", function(){
+      alertaEditOpen=!alertaEditOpen; $("alertaBtns").hidden=!alertaEditOpen;
+    });
+    $("telEditBtn").addEventListener("click", function(){ telEditMode=true; renderTelefonos(); });
+    $("telCancelarBtn").addEventListener("click", function(){ telEditMode=false; renderTelefonos(); });
+    $("telGuardarBtn").addEventListener("click", guardarTelefonos);
+    $("linkTableroEditBtn").addEventListener("click", function(){ linkTableroEditMode=true; renderInvitar(); });
+    $("linkTableroCancelarBtn").addEventListener("click", function(){ linkTableroEditMode=false; renderInvitar(); });
+    $("linkTableroGuardarBtn").addEventListener("click", guardarLinkTablero);
+    $("copiarInvitacionBtn").addEventListener("click", function(){ copyText($("invitarTexto").value); });
+    $("medioDigitalBtn").addEventListener("click", function(){ movMedioSel="digital"; markMedio(); });
+    $("medioEfectivoBtn").addEventListener("click", function(){ movMedioSel="efectivo"; markMedio(); });
+    markTipo(); markMedio();
+  }
+  function markTipo(){
+    $("tipoIngresoBtn").className = "btn-sm "+(movTipoSel==="ingreso"?"btn-accent":"btn-ghost");
+    $("tipoEgresoBtn").className = "btn-sm "+(movTipoSel==="egreso"?"btn-accent":"btn-ghost");
+  }
+  function markMedio(){
+    $("medioDigitalBtn").className = "btn-sm "+(movMedioSel==="digital"?"btn-accent":"btn-ghost");
+    $("medioEfectivoBtn").className = "btn-sm "+(movMedioSel==="efectivo"?"btn-accent":"btn-ghost");
+  }
+
+})();
+</script>
+<script>
+  // Guarda la app en el teléfono para que abra aunque no haya señal.
+  if("serviceWorker" in navigator && location.protocol==="https:"){
+    window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
+  }
+</script>
+</body>
+</html>

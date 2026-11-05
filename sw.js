@@ -7,7 +7,7 @@
 // Cuando se cambie cualquier archivo de la app, subir el número de VERSION
 // para que los teléfonos descarguen la versión nueva.
 
-var VERSION = "avisarnos-v6";
+var VERSION = "avisarnos-v7";
 var ARCHIVOS = [
   "./",
   "index.html",

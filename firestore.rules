@@ -65,21 +65,6 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    match /fondo/resumen {
-      allow read: if true;
-      allow create, update: if request.resource.data.keys().hasOnly(['saldoDigital','efectivoFisico','efectivoUbicacion','tope','custodio','aporte','aliasPago','linkPago','movimientos'])
-        && num(request.resource.data,'saldoDigital')
-        && num(request.resource.data,'efectivoFisico')
-        && num(request.resource.data,'tope')
-        && txt(request.resource.data,'efectivoUbicacion',200)
-        && txt(request.resource.data,'custodio',80)
-        && txt(request.resource.data,'aporte',200)
-        && txt(request.resource.data,'aliasPago',120)
-        && txt(request.resource.data,'linkPago',300)
-        && (!('movimientos' in request.resource.data) || (request.resource.data.movimientos is list && request.resource.data.movimientos.size() <= 200));
-      allow delete: if false;
-    }
-
     match /telefonos/utiles {
       allow read: if true;
       allow create, update: if request.resource.data.keys().hasOnly(['medicos','defensaCivil','bomberos','ambiental','etac','otros'])

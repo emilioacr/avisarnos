@@ -39,7 +39,7 @@ var DATOS = null;
 (function(){
   var log=document.getElementById("log"), btn=document.getElementById("btn");
   function escribir(t){ log.textContent += "\n"+t; }
-  var RUTA_OK=/^(casas\/[a-z0-9-]{1,60}|estado\/alerta|roles\/(alerta|vehiculo|generador|botiquin|enlace|tramo[0-9]{1,2})|fondo\/resumen|telefonos\/utiles|config\/general)$/;
+  var RUTA_OK=/^(casas\/[a-z0-9-]{1,60}|estado\/alerta|roles\/(alerta|vehiculo|generador|botiquin|enlace|tramo[0-9]{1,2})|telefonos\/utiles|config\/general)$/;
   function escH(t){ return String(t).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
   document.getElementById("archivo").addEventListener("change", function(ev){
     var f=ev.target.files && ev.target.files[0]; DATOS=null; btn.disabled=true;

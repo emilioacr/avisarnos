@@ -2,7 +2,7 @@
 
 Herramienta web de apoyo a un protocolo de emergencia vecinal ante inundación y corte de rutas, armada para una cuadra de Salsipuedes, Córdoba.
 
-Cada casa carga su perfil (quién necesita ayuda prioritaria) y, cuando se declara alerta naranja o roja, reporta su estado con cuatro colores: verde (están bien), amarillo (problema que puede esperar), naranja (van a necesitar ayuda en unas horas) y rojo (necesitan ayuda ya). También tiene roles y tramos del circuito de llamado, un fondo común con registro público de movimientos, teléfonos útiles, las recomendaciones oficiales por nivel de alerta y una lista para estar preparados antes de la temporada (lo que cada uno tilda queda solo en su teléfono).
+Cada casa carga su perfil (quién necesita ayuda prioritaria) y, cuando se declara alerta naranja o roja, reporta su estado con cuatro colores: verde (están bien), amarillo (problema que puede esperar), naranja (van a necesitar ayuda en unas horas) y rojo (necesitan ayuda ya). También tiene roles y tramos del circuito de llamado, teléfonos útiles, las recomendaciones oficiales por nivel de alerta y una lista para estar preparados antes de la temporada (lo que cada uno tilda queda solo en su teléfono).
 
 ## Cómo está hecha
 

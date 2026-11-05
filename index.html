@@ -196,7 +196,6 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
   <symbol id="ic-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.2"/><rect x="13" y="3" width="8" height="8" rx="1.2"/><rect x="3" y="13" width="8" height="8" rx="1.2"/><rect x="13" y="13" width="8" height="8" rx="1.2"/></symbol>
   <symbol id="ic-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9"/></symbol>
   <symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><circle cx="17.5" cy="9" r="2.3"/><path d="M15.8 14.3c2.5.4 4.2 2.5 4.2 5.7"/></symbol>
-  <symbol id="ic-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/></symbol>
   <symbol id="ic-check" viewBox="0 0 24 24"><path d="M4 12.5l5.2 5.2L20 6.5"/></symbol>
   <symbol id="ic-triangle" viewBox="0 0 24 24"><path d="M12 3.5L21 19H3z"/><path d="M12 9.5v4.5"/><path d="M12 17v.2"/></symbol>
   <symbol id="ic-octagon" viewBox="0 0 24 24"><path d="M8 3h8l5 5v8l-5 5H8l-5-5V8z"/><path d="M12 7.5V13"/><path d="M12 16.3v.2"/></symbol>
@@ -248,14 +247,6 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
       <button class="btn-ghost btn-sm" id="toggleAlertaEdit" style="margin-top:10px"><svg class="i"><use href="#ic-edit"></use></svg>Actualizar alerta</button>
       <div class="btnrow" id="alertaBtns" hidden></div>
       <div class="foot">Se declara a mano según el aviso del Servicio Meteorológico o de Defensa Civil. Todavía no hay conexión automática con esas fuentes.</div>
-    </div>
-
-    <div class="card">
-      <div class="row">
-        <svg class="i" style="width:20px;height:20px"><use href="#ic-coin"></use></svg>
-        <div class="grow"><div class="muted" style="font-size:.78rem">Fondo común</div><div style="font-weight:700" id="fondoMiniSaldo">—</div></div>
-        <button class="btn-ghost btn-sm" id="irAFondoBtn">Ver</button>
-      </div>
     </div>
 
     <div class="row" style="margin-bottom:8px">
@@ -436,7 +427,6 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
       <ul class="steps" style="list-style:disc;padding-left:18px;counter-reset:none">
         <li style="padding-left:0">Avisarnos entre vecinos cuando se activa una alerta oficial.</li>
         <li style="padding-left:0">Saber quién tiene qué recurso (vehículo, generador, botiquín) y prestarlo para un problema puntual de una casa.</li>
-        <li style="padding-left:0">Un fondo común para gastos chicos de la emergencia.</li>
         <li style="padding-left:0">Saber de antemano quién necesita ayuda prioritaria (mayores, menores, equipo médico), antes de que llegue cualquier ayuda externa.</li>
         <li style="padding-left:0">Un solo llamado organizado a la empresa u organismo correspondiente en nombre de todos, en vez de siete llamados sueltos.</li>
       </ul>
@@ -481,7 +471,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
       <ol class="steps">
         <li>Tenés el recurso disponible y accesible. No salís a recorrer la cuadra con él.</li>
         <li>Si el enlace o un responsable de tramo te lo pide para un problema puntual de una casa, lo prestás.</li>
-        <li>Si el problema se repite igual en varias casas (ej: todos sin luz), tu recurso sirve solo para bancar algo crítico mientras se espera. La causa de fondo la resuelve el enlace llamando a la empresa, no vos.</li>
+        <li>Si el problema se repite igual en varias casas (ej: todos sin luz), tu recurso sirve solo para bancar algo crítico mientras se espera. La causa real la resuelve el enlace llamando a la empresa, no vos.</li>
       </ol>
     </details>
 
@@ -489,79 +479,13 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
       <summary><svg class="i"><use href="#ic-link"></use></svg>Enlace con Defensa Civil / Municipalidad<svg class="i car"><use href="#ic-chevron"></use></svg></summary>
       <ol class="steps">
         <li>Recibís de cada responsable de tramo un resumen de su tramo, no casa por casa.</li>
-        <li>Separás dos tipos de problema: uno puntual de una sola casa lo resuelve la cuadra con lo que tiene (fondo común, generador, vehículo); uno que se repite igual en varias casas con la misma causa, hacés un solo llamado a la empresa correspondiente en nombre de todos.</li>
+        <li>Separás dos tipos de problema: uno puntual de una sola casa lo atiende la cuadra con lo que tiene (vehículo, generador, botiquín); uno que se repite igual en varias casas con la misma causa, hacés un solo llamado a la empresa correspondiente en nombre de todos.</li>
         <li>Después de la emergencia, reportás los daños de la cuadra y coordinás la limpieza: primero las casas aisladas o con vecinos vulnerables.</li>
-      </ol>
-    </details>
-
-    <details>
-      <summary><svg class="i"><use href="#ic-coin"></use></svg>Custodio del fondo común (rota cada temporada)<svg class="i car"><use href="#ic-chevron"></use></svg></summary>
-      <ol class="steps">
-        <li>Guardás la plata aportada y anotás cada ingreso y egreso en la pestaña Fondo, visible para cualquier aportante.</li>
-        <li>Un gasto chico, hasta el tope definido, lo autorizás directo si te lo pide el responsable de turno del circuito de llamado, sin consulta previa.</li>
-        <li>Un gasto mayor al tope necesita acuerdo de al menos dos responsables de tramo.</li>
-        <li>Al cerrar la temporada, informás el saldo a todos los aportantes.</li>
       </ol>
     </details>
 
     <p class="muted" style="margin-top:4px">Esto resume el protocolo completo de la cuadra. Ante riesgo real, siempre prima el 107, el 103 o el 100 por sobre lo que diga esta página.</p>
     <p class="muted" id="licenciaNota" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">Avisarnos es software libre de theorIA, con licencia <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener">AGPL-3.0</a>. Cualquier barrio puede copiarlo y adaptarlo, siempre que comparta sus cambios con la misma licencia.<span id="fuenteLinkWrap" hidden> <a id="fuenteLink" href="#" target="_blank" rel="noopener">Ver el código fuente</a>.</span></p>
-  </section>
-
-  <!-- FONDO -->
-  <section id="tab-fondo" hidden>
-    <h1>Fondo común</h1>
-    <p class="sub">Caja chica para gastos puntuales de la emergencia. No cubre daños de las casas ni reemplaza un seguro.</p>
-
-    <div class="card">
-      <div class="row">
-        <div class="grow"><div class="muted">Digital</div><div style="font-size:1.4rem;font-weight:700" id="saldoDigitalDisplay">—</div></div>
-        <div class="grow"><div class="muted">Efectivo (caja física)</div><div style="font-size:1.4rem;font-weight:700" id="efectivoDisplay">—</div></div>
-      </div>
-      <p class="muted" id="efectivoUbicacionDisplay" style="margin-top:8px"></p>
-      <p class="muted" style="margin-top:4px">Ante riesgo de corte de señal conviene tener parte del fondo en efectivo, no solo en una cuenta digital.</p>
-    </div>
-
-    <div class="card" id="aportarCard">
-      <h2>Aportar ahora</h2>
-      <div id="aportarLinkWrap" hidden></div>
-      <div id="aportarAliasWrap" hidden class="copyrow">
-        <code id="aliasPagoText"></code>
-        <button class="btn-ghost btn-sm" id="copiarAliasBtn"><svg class="i"><use href="#ic-copy"></use></svg>Copiar</button>
-      </div>
-      <p class="empty" id="aportarVacio">Todavía no se cargó un alias, CVU o link de pago. Completalo abajo.</p>
-      <p class="muted" style="margin-top:8px">¿Preferís aportar en efectivo? Se lo entregás directo al custodio de esta temporada y queda anotado como ingreso en Efectivo, abajo.</p>
-    </div>
-
-    <div class="card">
-      <h2>Configuración del fondo</h2>
-      <label class="field" style="margin-top:0"><span>Tope para gasto sin consulta previa</span><input type="number" id="topeInput" inputmode="decimal"></label>
-      <label class="field"><span>Custodio de esta temporada</span><input type="text" id="custodioInput"></label>
-      <label class="field"><span>Monto y frecuencia de aporte sugerido</span><input type="text" id="aporteInput" placeholder="Ej: $5000 por mes, octubre a abril"></label>
-      <label class="field"><span>Alias / CVU / CBU para aportar</span><input type="text" id="aliasPagoInput" placeholder="Ej: cuadra.mibarrio.uala"></label>
-      <label class="field"><span>Link de pago (opcional, Ualá, Mercado Pago, etc.)</span><input type="text" id="linkPagoInput" placeholder="https://..."></label>
-      <label class="field"><span>Dónde está guardada la caja física</span><input type="text" id="efectivoUbicacionInput" placeholder="Ej: en casa del custodio, caja metálica"></label>
-      <p class="muted" style="margin-top:8px">La cuenta digital queda a nombre de una persona porque abrir una cuenta sin titular no es posible en un banco o billetera común. Lo que la hace "de todos" no es a nombre de quién está, es que el registro de movimientos quede público acá abajo y que el custodio rote cada temporada. Para una cuenta realmente neutral hace falta constituir una asociación civil o cooperativa formal con CUIT propio — otro paso, aparte de esta app.</p>
-      <div class="btnrow"><button class="btn-ghost btn-sm" id="guardarFondoCfgBtn">Guardar</button></div>
-    </div>
-
-    <div class="card">
-      <h2>Registrar movimiento</h2>
-      <div class="btnrow">
-        <button class="btn-ghost btn-sm" data-tipo="ingreso" id="tipoIngresoBtn">Ingreso</button>
-        <button class="btn-ghost btn-sm" data-tipo="egreso" id="tipoEgresoBtn">Egreso</button>
-      </div>
-      <div class="btnrow">
-        <button class="btn-ghost btn-sm" id="medioDigitalBtn">Digital</button>
-        <button class="btn-ghost btn-sm" id="medioEfectivoBtn">Efectivo</button>
-      </div>
-      <label class="field"><span>Monto</span><input type="number" id="montoInput" inputmode="decimal"></label>
-      <label class="field"><span>Motivo</span><input type="text" id="motivoInput" placeholder="Ej: combustible para el vehículo"></label>
-      <div class="btnrow"><button class="btn-accent" id="agregarMovBtn">Agregar</button></div>
-    </div>
-
-    <h2>Movimientos</h2>
-    <div id="movList"></div>
   </section>
 
 </div>
@@ -573,7 +497,6 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
   <button data-tab="guia"><svg class="i"><use href="#ic-list"></use></svg>Guía</button>
   <button data-tab="tablero"><svg class="i"><use href="#ic-grid"></use></svg>Tablero</button>
   <button data-tab="roles"><svg class="i"><use href="#ic-users"></use></svg>Roles</button>
-  <button data-tab="fondo"><svg class="i"><use href="#ic-coin"></use></svg>Fondo</button>
 </div></nav>
 
 <script src="vendor/firebase-app-compat.js"></script>
@@ -673,7 +596,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
   })();
 
   // ---------- tabs ----------
-  var tabs=["micasa","guia","tablero","roles","fondo"];
+  var tabs=["micasa","guia","tablero","roles"];
   function showTab(t){
     tabs.forEach(function(name){ $("tab-"+name).hidden = (name!==t); });
     document.querySelectorAll("nav.tabs button").forEach(function(b){
@@ -684,21 +607,17 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
   document.querySelectorAll("nav.tabs button").forEach(function(b){
     b.addEventListener("click", function(){ showTab(b.getAttribute("data-tab")); });
   });
-  $("irAFondoBtn").addEventListener("click", function(){ showTab("fondo"); });
   $("filtroTramoSelect").addEventListener("change", function(){
     ls_set("cuadra_mi_tramo", $("filtroTramoSelect").value);
     renderCasasList();
   });
-  showTab(ls_get("cuadra_tab") || "micasa");
+  showTab(tabs.indexOf(ls_get("cuadra_tab"))>=0 ? ls_get("cuadra_tab") : "micasa");
 
   // ---------- state ----------
   var db=null, canWrite=true;
   var casas={};
   var alerta={ nivel:"ninguna" };
   var roles={};
-  var fondo={ saldoDigital:0, efectivoFisico:0, efectivoUbicacion:"", tope:0, custodio:"", aporte:"", aliasPago:"", linkPago:"", movimientos:[] };
-  var movTipoSel="ingreso";
-  var movMedioSel="digital";
   var alertaEditOpen=false;
   var telefonos=telefonosIniciales();
   var telEditMode=false;
@@ -901,11 +820,6 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
       qs.docs.forEach(function(d){ next[d.id]=d.data(); });
       roles=next;
       renderRoles();
-    }, function(e){ showMsg(dbErrText(e)); });
-
-    db.doc("fondo/resumen").onSnapshot(function(snap){
-      fondo = snap.exists ? snap.data() : {saldoDigital:0,efectivoFisico:0,efectivoUbicacion:"",tope:0,custodio:"",aporte:"",aliasPago:"",linkPago:"",movimientos:[]};
-      renderFondo();
     }, function(e){ showMsg(dbErrText(e)); });
 
     db.doc("telefonos/utiles").onSnapshot(function(snap){
@@ -1315,78 +1229,6 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
     if(guardar(db.doc("telefonos/utiles"), next, "Guardado.")){ telEditMode=false; renderTelefonos(); }
   }
 
-  // ========== FONDO ==========
-  function renderFondo(){
-    var dig = Number(fondo.saldoDigital||0), ef = Number(fondo.efectivoFisico||0);
-    $("saldoDigitalDisplay").textContent = "$"+dig.toLocaleString("es-AR");
-    $("efectivoDisplay").textContent = "$"+ef.toLocaleString("es-AR");
-    $("efectivoUbicacionDisplay").textContent = fondo.efectivoUbicacion ? ("Ubicación: "+fondo.efectivoUbicacion) : "";
-    $("fondoMiniSaldo").textContent = "$"+(dig+ef).toLocaleString("es-AR")+" (total)";
-    $("topeInput").value = fondo.tope || "";
-    $("custodioInput").value = fondo.custodio || "";
-    $("aporteInput").value = fondo.aporte || "";
-    $("aliasPagoInput").value = fondo.aliasPago || "";
-    $("linkPagoInput").value = fondo.linkPago || "";
-    $("efectivoUbicacionInput").value = fondo.efectivoUbicacion || "";
-
-    var linkWrap=$("aportarLinkWrap"), aliasWrap=$("aportarAliasWrap"), vacio=$("aportarVacio");
-    var any=false;
-    if(fondo.linkPago){
-      linkWrap.hidden=false; any=true;
-      linkWrap.innerHTML='<a class="btn-accent" href="'+esc(fondo.linkPago)+'" target="_blank" rel="noopener"><svg class="i"><use href="#ic-link"></use></svg>Aportar ahora</a>';
-    } else { linkWrap.hidden=true; linkWrap.innerHTML=""; }
-    if(fondo.aliasPago){
-      aliasWrap.hidden=false; any=true;
-      $("aliasPagoText").textContent=fondo.aliasPago;
-    } else { aliasWrap.hidden=true; }
-    vacio.hidden = any;
-
-    var movs = (fondo.movimientos||[]).slice().reverse();
-    var el=$("movList");
-    if(!movs.length){ el.innerHTML='<div class="empty">Todavía no hay movimientos registrados.</div>'; return; }
-    el.innerHTML = movs.map(function(m){
-      var signo = m.tipo==="egreso" ? "-" : "+";
-      var color = m.tipo==="egreso" ? "var(--red)" : "var(--green)";
-      return '<div class="card"><div class="row">'+
-        '<div class="grow"><div class="name">'+esc(m.motivo||"")+'</div>'+
-        '<div class="muted">'+esc(m.fecha||"")+' · '+(m.medio==="efectivo"?"efectivo":"digital")+'</div></div>'+
-        '<div style="font-weight:700;color:'+color+'">'+signo+'$'+Number(m.monto||0).toLocaleString("es-AR")+'</div>'+
-        '</div></div>';
-    }).join("");
-  }
-
-  async function guardarFondoCfg(){
-    if(!canWrite) return showMsg("No tenés permiso para editar.");
-    var next = Object.assign({}, fondo, {
-      tope: Number($("topeInput").value)||0,
-      custodio: $("custodioInput").value.trim(),
-      aporte: $("aporteInput").value.trim(),
-      aliasPago: $("aliasPagoInput").value.trim(),
-      linkPago: $("linkPagoInput").value.trim(),
-      efectivoUbicacion: $("efectivoUbicacionInput").value.trim()
-    });
-    guardar(db.doc("fondo/resumen"), next, "Guardado.");
-  }
-
-  async function agregarMovimiento(){
-    if(!canWrite) return showMsg("No tenés permiso para editar.");
-    var monto = Number($("montoInput").value);
-    var motivo = $("motivoInput").value.trim();
-    if(!monto || monto<=0) return showMsg("Poné un monto mayor a cero.");
-    if(!motivo) return showMsg("Contá el motivo del movimiento.");
-    var delta = movTipoSel==="egreso" ? -monto : monto;
-    var mov = { tipo:movTipoSel, medio:movMedioSel, monto:monto, motivo:motivo, fecha:new Date().toLocaleDateString("es-AR") };
-    var movimientos = (fondo.movimientos||[]).concat([mov]).slice(-200);
-    var next = Object.assign({}, fondo, {
-      saldoDigital: movMedioSel==="digital" ? Number(fondo.saldoDigital||0)+delta : Number(fondo.saldoDigital||0),
-      efectivoFisico: movMedioSel==="efectivo" ? Number(fondo.efectivoFisico||0)+delta : Number(fondo.efectivoFisico||0),
-      movimientos: movimientos
-    });
-    if(guardar(db.doc("fondo/resumen"), next, "Movimiento agregado.")){
-      $("montoInput").value=""; $("motivoInput").value="";
-    }
-  }
-
   // ========== bind events ==========
   function bindEvents(){
     $("createHouseBtn").addEventListener("click", createHouse);
@@ -1410,11 +1252,6 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
     $("agregarCasaBtn").addEventListener("click", function(){ $("agregarCasaForm").hidden=!$("agregarCasaForm").hidden; });
     $("nuevaCasaCancelarBtn").addEventListener("click", function(){ $("agregarCasaForm").hidden=true; $("nuevaCasaInput").value=""; });
     $("nuevaCasaGuardarBtn").addEventListener("click", adminCrearCasa);
-    $("guardarFondoCfgBtn").addEventListener("click", guardarFondoCfg);
-    $("agregarMovBtn").addEventListener("click", agregarMovimiento);
-    $("copiarAliasBtn").addEventListener("click", function(){ copyText($("aliasPagoText").textContent); });
-    $("tipoIngresoBtn").addEventListener("click", function(){ movTipoSel="ingreso"; markTipo(); });
-    $("tipoEgresoBtn").addEventListener("click", function(){ movTipoSel="egreso"; markTipo(); });
     $("toggleAlertaEdit").addEventListener("click", function(){
       alertaEditOpen=!alertaEditOpen; $("alertaBtns").hidden=!alertaEditOpen;
     });
@@ -1425,17 +1262,6 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
     $("linkTableroCancelarBtn").addEventListener("click", function(){ linkTableroEditMode=false; renderInvitar(); });
     $("linkTableroGuardarBtn").addEventListener("click", guardarLinkTablero);
     $("copiarInvitacionBtn").addEventListener("click", function(){ copyText($("invitarTexto").value); });
-    $("medioDigitalBtn").addEventListener("click", function(){ movMedioSel="digital"; markMedio(); });
-    $("medioEfectivoBtn").addEventListener("click", function(){ movMedioSel="efectivo"; markMedio(); });
-    markTipo(); markMedio();
-  }
-  function markTipo(){
-    $("tipoIngresoBtn").className = "btn-sm "+(movTipoSel==="ingreso"?"btn-accent":"btn-ghost");
-    $("tipoEgresoBtn").className = "btn-sm "+(movTipoSel==="egreso"?"btn-accent":"btn-ghost");
-  }
-  function markMedio(){
-    $("medioDigitalBtn").className = "btn-sm "+(movMedioSel==="digital"?"btn-accent":"btn-ghost");
-    $("medioEfectivoBtn").className = "btn-sm "+(movMedioSel==="efectivo"?"btn-accent":"btn-ghost");
   }
 
 })();

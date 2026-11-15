@@ -249,9 +249,9 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
       <div class="foot">Se declara a mano según el aviso del Servicio Meteorológico o de Defensa Civil. Todavía no hay conexión automática con esas fuentes.</div>
     </div>
 
-    <div class="row" style="margin-bottom:8px">
-      <div class="grow"><label class="field" style="margin-top:0"><span>Mostrar</span>
-        <select id="filtroTramoSelect"><option value="">Toda la cuadra</option></select>
+    <div class="row" id="filtroTramoRow" style="margin-bottom:8px" hidden>
+      <div class="grow"><label class="field" style="margin-top:0"><span>Ver</span>
+        <select id="filtroTramoSelect"><option value="">Todas las casas</option></select>
       </label></div>
     </div>
     <h2>Estado de cada casa</h2>
@@ -333,6 +333,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
         </label>
         <div class="btnrow"><button class="btn-accent" id="guardarEstadoBtn">Guardar estado</button></div>
         <p class="muted" id="estadoActualizado" style="margin-top:8px"></p>
+        <p class="muted" style="margin-top:4px">Una vez que guardaste, no hace falta volver a cada rato: actualizalo solo si cambia algo. Cuidá la batería.</p>
       </div>
 
       <p class="muted">Casa: <strong id="miCasaNombre"></strong> · <button class="btn-ghost btn-sm" id="cambiarCasaBtn">No es mi casa</button></p>
@@ -369,7 +370,8 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
     </div>
 
     <div class="card">
-      <h2>Circuito de llamado (tramos)</h2>
+      <h2>Circuito de llamado: quién avisa a quién</h2>
+      <p class="muted" style="margin:0 0 10px">Un tramo es un grupo de casas vecinas. Cuando se activa el protocolo, una persona (el titular) avisa a esas casas por teléfono o en persona, y el suplente la reemplaza si no está. Si son pocas casas, alcanza con un solo tramo, o con ninguno.</p>
       <div id="tramosList"></div>
       <div class="btnrow"><button class="btn-ghost btn-sm" id="agregarTramoBtn"><svg class="i"><use href="#ic-plus"></use></svg>Agregar tramo</button></div>
     </div>
@@ -438,6 +440,7 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
         <li>Antes de la temporada de lluvias, completá el Perfil de tu casa en "Mi casa" y repasá la lista "Estar preparados", que está en esa misma pestaña.</li>
         <li>Cuando se declare alerta naranja o roja, tené a mano linterna, agua y el celular cargado. No hace falta salir de tu casa.</li>
         <li>Reportá tu estado apenas puedas, con uno de los cuatro colores: verde si están bien; amarillo si hay un problema que puede esperar (ej: sin luz); naranja si todavía se aguanta pero en unas horas van a necesitar ayuda (ej: empieza a entrar agua, la batería del equipo médico dura poco, se termina la medicación); rojo si necesitan ayuda ya. Si no decís nada, se asume verde.</li>
+        <li>No hace falta entrar a cada rato: si dejás la app abierta, se actualiza sola. Mirala cada tanto y cuidá la batería, que en un corte de luz es lo que más vale. Si pasa algo urgente, tu responsable de tramo te avisa.</li>
         <li>Si no tenés ningún tipo de señal, usá la seña visual pasiva (trapo o cartel en la ventana) y esperá a tu responsable de tramo. Nadie sale mientras hay peligro activo.</li>
         <li>Después de la tormenta, participá de la reunión corta para anotar qué falló esta vez.</li>
       </ol>
@@ -1122,13 +1125,19 @@ nav.tabs button.active{color:var(--accent); font-weight:700;}
     var sel=$("filtroTramoSelect");
     var cur = ls_get("cuadra_mi_tramo") || "";
     var tramoIds = Object.keys(roles).filter(function(k){ return /^tramo\d+$/.test(k); }).sort();
-    var opts = '<option value="">Toda la cuadra</option>' + tramoIds.map(function(id,i){
+    // El filtro solo aparece cuando hay al menos dos tramos con casas asignadas:
+    // con un solo grupo no hay nada que filtrar y confunde.
+    var conCasas = tramoIds.filter(function(id){ return ((roles[id]||{}).casasIds||[]).length>0; });
+    var mostrar = conCasas.length>=2;
+    $("filtroTramoRow").hidden = !mostrar;
+    if(!mostrar){ if(cur) ls_del("cuadra_mi_tramo"); sel.value=""; renderCasasList(); return; }
+    var opts = '<option value="">Todas las casas</option>' + conCasas.map(function(id){
       var d=roles[id]||{};
-      var label=d.nombre || ("Tramo "+(i+1));
-      return '<option value="'+esc(id)+'">Mi tramo: '+esc(label)+'</option>';
+      var label=d.nombre || ("Tramo "+(tramoIds.indexOf(id)+1));
+      return '<option value="'+esc(id)+'">Solo las casas de '+esc(label)+'</option>';
     }).join("");
     if(sel.innerHTML!==opts) sel.innerHTML=opts;
-    sel.value = tramoIds.indexOf(cur)>=0 ? cur : "";
+    sel.value = conCasas.indexOf(cur)>=0 ? cur : "";
     renderCasasList();
   }
 
